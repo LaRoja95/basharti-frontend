@@ -215,6 +215,13 @@
       ? '<img src="' + escapeAttr(p.image) + '" alt="' + escapeAttr(p.name) + '" />'
       : "🌸";
 
+    var gallery = "";
+    if (Array.isArray(p.images) && p.images.length) {
+      gallery = '<div class="product-gallery">' + p.images.map(function (src) {
+        return '<img src="' + escapeAttr(src) + '" alt="' + escapeAttr(p.name) + '" loading="lazy" />';
+      }).join("") + "</div>";
+    }
+
     $("#productModalBody").innerHTML = (
       '<div class="product-modal-thumb">' + thumb + "</div>" +
       "<h2>" + escapeHtml(p.name) + "</h2>" +
@@ -225,7 +232,8 @@
         '<span id="modalQty">1</span>' +
         '<button type="button" data-action="qty-inc">+</button>' +
       "</div>" +
-      '<button class="btn btn-primary btn-block" data-action="add-to-cart">أضف إلى السلة</button>'
+      '<button class="btn btn-primary btn-block" data-action="add-to-cart">أضف إلى السلة</button>' +
+      gallery
     );
 
     $("#productOverlay").hidden = false;
