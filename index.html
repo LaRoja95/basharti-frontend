@@ -7,13 +7,33 @@
 <meta name="description" content="بشرتي - منتجات العناية بالبشرة والتجميل الأصلية. الدفع عند الاستلام في جميع أنحاء المملكة." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
 <header class="site-header">
   <div class="container header-inner">
-    <a href="#" class="logo" data-action="go-shop">بشرتي</a>
+    <a href="#" class="logo" data-action="go-shop">
+      <svg class="logo-icon" viewBox="0 0 40 40" width="34" height="34" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="bshLogoGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#e8a0ac"/>
+            <stop offset="1" stop-color="#d1717f"/>
+          </linearGradient>
+        </defs>
+        <circle cx="20" cy="20" r="20" fill="url(#bshLogoGrad)"/>
+        <g fill="#fbf3ee">
+          <circle cx="20" cy="12" r="6"/>
+          <circle cx="27" cy="17" r="6"/>
+          <circle cx="24" cy="25" r="6"/>
+          <circle cx="16" cy="25" r="6"/>
+          <circle cx="13" cy="17" r="6"/>
+        </g>
+        <circle cx="20" cy="19" r="4.5" fill="#d1717f"/>
+      </svg>
+      <span class="logo-text">بشرتي</span>
+    </a>
     <button class="cart-btn" data-action="open-cart" aria-label="السلة">
       🛍️ السلة
       <span class="cart-count" id="cartCount">0</span>
@@ -62,9 +82,10 @@
     <div id="cartItems"></div>
     <div class="cart-summary">
       <div class="cart-total-row">
-        <span>الإجمالي</span>
+        <span>المجموع الفرعي</span>
         <strong id="cartTotal">0 ر.س</strong>
       </div>
+      <p class="muted shipping-hint">يُضاف رسوم التوصيل حسب المنطقة عند إتمام الطلب</p>
       <button class="btn btn-primary btn-block" id="checkoutBtn" data-action="go-checkout">إتمام الطلب</button>
     </div>
   </div>
@@ -82,12 +103,22 @@
       <label>رقم الجوال
         <input type="tel" name="phone" required placeholder="05xxxxxxxx" inputmode="numeric" />
       </label>
+      <label>المنطقة
+        <select name="regionId" id="regionSelect" required>
+          <option value="" disabled selected>اختر المنطقة</option>
+        </select>
+      </label>
       <label>المدينة
         <input type="text" name="city" required minlength="2" maxlength="60" placeholder="مثال: الرياض" />
       </label>
       <label>العنوان بالتفصيل
         <textarea name="address" required minlength="5" maxlength="240" placeholder="الحي، الشارع، رقم المبنى..."></textarea>
       </label>
+      <div class="checkout-summary" id="checkoutSummary">
+        <div class="summary-row"><span>المجموع الفرعي</span><span id="summarySubtotal">0 ر.س</span></div>
+        <div class="summary-row"><span>التوصيل</span><span id="summaryShipping">—</span></div>
+        <div class="summary-row summary-total"><span>الإجمالي</span><span id="summaryTotal">0 ر.س</span></div>
+      </div>
       <div class="cod-note">💵 الدفع عند الاستلام — لا حاجة لبطاقة ائتمان</div>
       <p class="form-error" id="checkoutError" hidden></p>
       <button type="submit" class="btn btn-primary btn-block" id="submitOrderBtn">تأكيد الطلب</button>

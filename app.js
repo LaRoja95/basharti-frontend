@@ -15,6 +15,7 @@
 
   var state = {
     products: {},      // id -> product
+    regions: {},        // id -> region {name, shippingCost}
     cart: loadCart(),  // [{productId, quantity}]
     activeProductId: null,
   };
@@ -165,6 +166,44 @@
   function escapeAttr(str) { return escapeHtml(str); }
 
   // -------------------------------------------------------------------
+  // Shipping regions
+  // -------------------------------------------------------------------
+  function loadRegions() {
+    fetch(apiUrl("/api/regions"))
+      .then(function (res) { if (!res.ok) throw new Error("bad status"); return res.json(); })
+      .then(function (regions) {
+        state.regions = {};
+        regions.forEach(function (r) { state.regions[r.id] = r; });
+        var select = $("#regionSelect");
+        if (!select) return;
+        var placeholder = select.querySelector('option[value=""]');
+        select.innerHTML = "";
+        if (placeholder) select.appendChild(placeholder);
+        regions.forEach(function (r) {
+          var opt = document.createElement("option");
+          opt.value = r.id;
+          opt.textContent = r.name + " (" + fmtPrice(r.shippingCost) + " توصيل)";
+          select.appendChild(opt);
+        });
+      })
+      .catch(function () { /* checkout will show a clear error if regions failed to load */ });
+  }
+
+  function selectedRegion() {
+    var select = $("#regionSelect");
+    return select ? state.regions[select.value] : null;
+  }
+
+  function updateCheckoutSummary() {
+    var subtotal = cartTotal();
+    var region = selectedRegion();
+    var shipping = region ? region.shippingCost : 0;
+    $("#summarySubtotal").textContent = fmtPrice(subtotal);
+    $("#summaryShipping").textContent = region ? fmtPrice(shipping) : "—";
+    $("#summaryTotal").textContent = fmtPrice(subtotal + shipping);
+  }
+
+  // -------------------------------------------------------------------
   // Product modal
   // -------------------------------------------------------------------
   function openProduct(productId) {
@@ -307,6 +346,7 @@
     closeCart();
     $("#checkoutError").hidden = true;
     $("#checkoutOverlay").hidden = false;
+    updateCheckoutSummary();
 
     var items = state.cart.map(function (i) { return i.productId; });
     track("InitiateCheckout", {
@@ -334,10 +374,17 @@
     var payload = {
       name: form.name.value.trim(),
       phone: form.phone.value.trim(),
+      regionId: form.regionId.value,
       city: form.city.value.trim(),
       address: form.address.value.trim(),
       items: state.cart.map(function (i) { return { productId: i.productId, quantity: i.quantity }; }),
     };
+
+    if (!payload.regionId) {
+      errorEl.textContent = "الرجاء اختيار المنطقة";
+      errorEl.hidden = false;
+      return;
+    }
 
     submitBtn.disabled = true;
     submitBtn.textContent = "جاري إرسال الطلب...";
@@ -459,6 +506,7 @@
   });
 
   $("#checkoutForm").addEventListener("submit", submitCheckout);
+  $("#regionSelect").addEventListener("change", updateCheckoutSummary);
 
   document.addEventListener("keydown", function (evt) {
     if (evt.key === "Escape") {
@@ -473,6 +521,7 @@
   // -------------------------------------------------------------------
   initPixel();
   loadProducts();
+  loadRegions();
   updateCartCount();
 
   if (!API_BASE) {
