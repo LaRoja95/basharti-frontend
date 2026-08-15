@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>بشرتي | العناية بالبشرة ومستحضرات التجميل</title>
+<meta name="description" content="بشرتي - منتجات العناية بالبشرة والتجميل الأصلية. الدفع عند الاستلام في جميع أنحاء المملكة." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="#" class="logo" data-action="go-shop">بشرتي</a>
+    <button class="cart-btn" data-action="open-cart" aria-label="السلة">
+      🛍️ السلة
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="container">
+      <h1>جمالك الطبيعي يبدأ من هنا</h1>
+      <p>منتجات عناية بالبشرة مختارة بعناية — الدفع عند الاستلام</p>
+    </div>
+  </section>
+
+  <section class="container">
+    <h2 class="section-title">منتجاتنا</h2>
+    <div id="productGrid" class="product-grid">
+      <p class="loading">جاري تحميل المنتجات...</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>بشرتي © 2026 — جميع الحقوق محفوظة</p>
+    <p class="muted">الدفع عند الاستلام فقط · التوصيل لجميع مناطق المملكة</p>
+  </div>
+</footer>
+
+<!-- Product detail modal -->
+<div class="overlay" id="productOverlay" hidden>
+  <div class="modal product-modal">
+    <button class="modal-close" data-action="close-product">✕</button>
+    <div id="productModalBody"></div>
+  </div>
+</div>
+
+<!-- Cart drawer -->
+<div class="overlay" id="cartOverlay" hidden>
+  <div class="modal cart-modal">
+    <button class="modal-close" data-action="close-cart">✕</button>
+    <h2>سلة المشتريات</h2>
+    <div id="cartItems"></div>
+    <div class="cart-summary">
+      <div class="cart-total-row">
+        <span>الإجمالي</span>
+        <strong id="cartTotal">0 ر.س</strong>
+      </div>
+      <button class="btn btn-primary btn-block" id="checkoutBtn" data-action="go-checkout">إتمام الطلب</button>
+    </div>
+  </div>
+</div>
+
+<!-- Checkout modal -->
+<div class="overlay" id="checkoutOverlay" hidden>
+  <div class="modal checkout-modal">
+    <button class="modal-close" data-action="close-checkout">✕</button>
+    <h2>بيانات التوصيل</h2>
+    <form id="checkoutForm">
+      <label>الاسم الكامل
+        <input type="text" name="name" required minlength="2" maxlength="80" placeholder="مثال: سارة أحمد" />
+      </label>
+      <label>رقم الجوال
+        <input type="tel" name="phone" required placeholder="05xxxxxxxx" inputmode="numeric" />
+      </label>
+      <label>المدينة
+        <input type="text" name="city" required minlength="2" maxlength="60" placeholder="مثال: الرياض" />
+      </label>
+      <label>العنوان بالتفصيل
+        <textarea name="address" required minlength="5" maxlength="240" placeholder="الحي، الشارع، رقم المبنى..."></textarea>
+      </label>
+      <div class="cod-note">💵 الدفع عند الاستلام — لا حاجة لبطاقة ائتمان</div>
+      <p class="form-error" id="checkoutError" hidden></p>
+      <button type="submit" class="btn btn-primary btn-block" id="submitOrderBtn">تأكيد الطلب</button>
+    </form>
+  </div>
+</div>
+
+<!-- Thank you modal -->
+<div class="overlay" id="thankYouOverlay" hidden>
+  <div class="modal thankyou-modal">
+    <div class="thankyou-icon">✅</div>
+    <h2>تم استلام طلبك بنجاح!</h2>
+    <p>رقم الطلب: <strong id="thankYouOrderId"></strong></p>
+    <p class="muted">سنتواصل معك قريباً لتأكيد التوصيل. الدفع عند الاستلام.</p>
+    <button class="btn btn-primary" data-action="close-thankyou">متابعة التسوق</button>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
