@@ -1,11 +1,13 @@
-// Basharti storefront config.
-// Update these two values once the backend + TikTok Pixel are ready —
-// nothing else in the site needs to change.
+// Basharti (بشرتي) storefront config
 window.BASHARTI_CONFIG = {
-  // Base URL of the deployed FastAPI backend (basharti-backend), no trailing slash.
-  // Example: "https://basharti-backend.abcd1234.easypanel.host"
-    API_BASE: "https://basharti-basharti-backend.ezlcbl.easypanel.host",
-
-  // TikTok Pixel ID for the Basharti store (leave empty to disable tracking).
+  API_BASE: "https://basharti-basharti-backend.ezlcbl.easypanel.host",
   TIKTOK_PIXEL_ID: "",
+
+  PRODUCT_META: {
+    "scar-gel-tcm":    { emoji: "✨", category: "عناية بالبشرة", gradient: "linear-gradient(135deg, #fff8e1, #d4a574)", image: "assets/products/scar-gel/v01-hero.png" },
+    "serum-vitc":      { emoji: "🍊", category: "سيروم", gradient: "linear-gradient(135deg, #fff3e0, #ffcc80)" },
+    "cream-hydra":     { emoji: "🧴", category: "ترطيب", gradient: "linear-gradient(135deg, #e0f2f1, #7eb8b0)" },
+    "sunscreen-spf50": { emoji: "☀️", category: "حماية", gradient: "linear-gradient(135deg, #fff8e1, #d4a574)" },
+    "cleanser-gentle": { emoji: "🫧", category: "تنظيف", gradient: "linear-gradient(135deg, #f3e5f5, #d1717f)" },
+  },
 };

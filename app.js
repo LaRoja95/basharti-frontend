@@ -1,4 +1,4 @@
-/* Basharti storefront logic.
+/* Basharti (بشرتي) storefront logic.
  * No frameworks — vanilla JS. Talks to the FastAPI backend for products
  * and orders, and mirrors key events to TikTok Pixel (client) + the
  * server-side /api/e relay (CAPI) using a shared event_id per occurrence
@@ -12,6 +12,27 @@
   var API_BASE = (CONFIG.API_BASE || "").replace(/\/$/, "");
   var PIXEL_ID = CONFIG.TIKTOK_PIXEL_ID || "";
   var CART_KEY = "basharti_cart_v1";
+
+  // Shown if the API is temporarily unreachable (store still browsable).
+  var FALLBACK_PRODUCTS = [
+    {
+      id: "scar-gel-tcm",
+      name: "جل مرهم لإزالة آثار الندبات وحب الشباب",
+      description: "تركيبة TCM بسنتيلا آسياتيكا ونياسيناميد — 30 جرام.",
+      price: 199,
+      image: "assets/products/scar-gel/v01-hero.png",
+    },
+    { id: "serum-vitc", name: "سيروم فيتامين سي للوجه", description: "سيروم مضاد للأكسدة لتفتيح وتوحيد لون البشرة", price: 89, image: "" },
+    { id: "cream-hydra", name: "كريم ترطيب مكثف", description: "ترطيب عميق لمدة 24 ساعة لجميع أنواع البشرة", price: 69, image: "" },
+    { id: "sunscreen-spf50", name: "واقي شمس SPF 50", description: "حماية عالية من أشعة الشمس بملمس خفيف غير دهني", price: 75, image: "" },
+    { id: "cleanser-gentle", name: "غسول لطيف للوجه", description: "ينظف دون أن يجرد البشرة من رطوبتها الطبيعية", price: 49, image: "" },
+  ];
+
+  var FALLBACK_REGIONS = [
+    { id: "riyadh", name: "الرياض", shippingCost: 20 },
+    { id: "makkah", name: "مكة المكرمة", shippingCost: 25 },
+    { id: "eastern", name: "المنطقة الشرقية", shippingCost: 25 },
+  ];
 
   var state = {
     products: {},      // id -> product
@@ -120,7 +141,35 @@
   // -------------------------------------------------------------------
   // Products
   // -------------------------------------------------------------------
-  function fmtPrice(price) { return price + " ر.س"; }
+  function fmtPrice(price) { return price.toLocaleString("ar-SA") + " ر.س"; }
+
+  function productMeta(productId) {
+    var meta = (CONFIG.PRODUCT_META || {})[productId] || {};
+    return {
+      emoji: meta.emoji || "✨",
+      category: meta.category || "تجميل",
+      gradient: meta.gradient || "linear-gradient(135deg, #fce4ec, #e8a0ac)",
+    };
+  }
+
+  function renderProductThumb(p) {
+    var meta = productMeta(p.id);
+    var img = p.image || meta.image;
+    if (img) {
+      return '<img src="' + escapeAttr(img) + '" alt="' + escapeAttr(p.name) + '" loading="lazy" />';
+    }
+    var meta = productMeta(p.id);
+    return (
+      '<div class="product-thumb-placeholder" style="background:' + meta.gradient + '">' +
+        '<span aria-hidden="true">' + meta.emoji + '</span>' +
+      '</div>'
+    );
+  }
+
+  function renderProductCategory(p) {
+    var cat = productMeta(p.id).category;
+    return '<span class="product-category">' + escapeHtml(cat) + '</span>';
+  }
 
   function loadProducts() {
     fetch(apiUrl("/api/products"))
@@ -131,7 +180,9 @@
         renderProductGrid(products);
       })
       .catch(function () {
-        $("#productGrid").innerHTML = '<p class="loading">تعذر تحميل المنتجات حالياً، حاول تحديث الصفحة.</p>';
+        state.products = {};
+        FALLBACK_PRODUCTS.forEach(function (p) { state.products[p.id] = p; });
+        renderProductGrid(FALLBACK_PRODUCTS);
       });
   }
 
@@ -142,18 +193,21 @@
       return;
     }
     grid.innerHTML = products.map(function (p) {
-      var thumb = p.image
-        ? '<img src="' + escapeAttr(p.image) + '" alt="' + escapeAttr(p.name) + '" />'
-        : "🌸";
       return (
-        '<div class="product-card" data-product-id="' + escapeAttr(p.id) + '" data-action="open-product">' +
-          '<div class="product-thumb">' + thumb + "</div>" +
+        '<article class="product-card" data-product-id="' + escapeAttr(p.id) + '" data-action="open-product">' +
+          '<div class="product-thumb">' +
+            renderProductCategory(p) +
+            renderProductThumb(p) +
+          '</div>' +
           '<div class="product-info">' +
             "<h3>" + escapeHtml(p.name) + "</h3>" +
             '<p class="product-desc">' + escapeHtml(p.description || "") + "</p>" +
-            '<span class="product-price">' + fmtPrice(p.price) + "</span>" +
+            '<div class="product-footer">' +
+              '<span class="product-price">' + fmtPrice(p.price) + "</span>" +
+              '<span class="product-cod">COD</span>' +
+            '</div>' +
           "</div>" +
-        "</div>"
+        "</article>"
       );
     }).join("");
   }
@@ -166,7 +220,7 @@
   function escapeAttr(str) { return escapeHtml(str); }
 
   // -------------------------------------------------------------------
-  // Shipping regions
+  // Shipping regions (wilayas)
   // -------------------------------------------------------------------
   function loadRegions() {
     fetch(apiUrl("/api/regions"))
@@ -186,7 +240,21 @@
           select.appendChild(opt);
         });
       })
-      .catch(function () { /* checkout will show a clear error if regions failed to load */ });
+      .catch(function () {
+        state.regions = {};
+        FALLBACK_REGIONS.forEach(function (r) { state.regions[r.id] = r; });
+        var select = $("#regionSelect");
+        if (!select) return;
+        var placeholder = select.querySelector('option[value=""]');
+        select.innerHTML = "";
+        if (placeholder) select.appendChild(placeholder);
+        FALLBACK_REGIONS.forEach(function (r) {
+          var opt = document.createElement("option");
+          opt.value = r.id;
+          opt.textContent = r.name + " (" + fmtPrice(r.shippingCost) + " توصيل)";
+          select.appendChild(opt);
+        });
+      });
   }
 
   function selectedRegion() {
@@ -211,19 +279,11 @@
     if (!p) return;
     state.activeProductId = productId;
 
-    var thumb = p.image
-      ? '<img src="' + escapeAttr(p.image) + '" alt="' + escapeAttr(p.name) + '" />'
-      : "🌸";
-
-    var gallery = "";
-    if (Array.isArray(p.images) && p.images.length) {
-      gallery = '<div class="product-gallery">' + p.images.map(function (src) {
-        return '<img src="' + escapeAttr(src) + '" alt="' + escapeAttr(p.name) + '" loading="lazy" />';
-      }).join("") + "</div>";
-    }
+    var thumb = renderProductThumb(p);
 
     $("#productModalBody").innerHTML = (
       '<div class="product-modal-thumb">' + thumb + "</div>" +
+      '<p class="muted" style="margin:0 0 8px;font-weight:800">' + escapeHtml(productMeta(p.id).category) + '</p>' +
       "<h2>" + escapeHtml(p.name) + "</h2>" +
       '<p class="muted">' + escapeHtml(p.description || "") + "</p>" +
       '<div class="product-price">' + fmtPrice(p.price) + "</div>" +
@@ -232,8 +292,7 @@
         '<span id="modalQty">1</span>' +
         '<button type="button" data-action="qty-inc">+</button>' +
       "</div>" +
-      '<button class="btn btn-primary btn-block" data-action="add-to-cart">أضف إلى السلة</button>' +
-      gallery
+      '<button class="btn btn-primary btn-block" data-action="add-to-cart">أضف إلى السلة</button>'
     );
 
     $("#productOverlay").hidden = false;
@@ -466,7 +525,7 @@
 
     switch (action) {
       case "open-product":
-        openProduct(target.getAttribute("data-product-id"));
+        window.location.href = "product.html?id=" + encodeURIComponent(target.getAttribute("data-product-id"));
         break;
       case "close-product":
         closeProduct();
@@ -531,6 +590,11 @@
   loadProducts();
   loadRegions();
   updateCartCount();
+
+  if (sessionStorage.getItem("basharti:openCart")) {
+    sessionStorage.removeItem("basharti:openCart");
+    setTimeout(openCart, 300);
+  }
 
   if (!API_BASE) {
     console.warn("BASHARTI_CONFIG.API_BASE is empty — set it in config.js once the backend is deployed.");
