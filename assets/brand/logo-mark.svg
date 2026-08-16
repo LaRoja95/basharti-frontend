@@ -1,0 +1,25 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="bshMarkGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f5c4cc"/>
+      <stop offset="0.5" stop-color="#e8a0ac"/>
+      <stop offset="1" stop-color="#d1717f"/>
+    </linearGradient>
+    <radialGradient id="bshGlow" cx="50%" cy="40%" r="55%">
+      <stop offset="0" stop-color="#fff8f5"/>
+      <stop offset="1" stop-color="#f5ebe6"/>
+    </radialGradient>
+  </defs>
+  <circle cx="24" cy="24" r="23" fill="url(#bshMarkGrad)"/>
+  <circle cx="24" cy="24" r="18" fill="url(#bshGlow)" opacity="0.95"/>
+  <!-- soft petal ring  evokes skin cells / flower care -->
+  <g fill="#d1717f" opacity="0.85">
+    <ellipse cx="24" cy="11" rx="5" ry="7"/>
+    <ellipse cx="35" cy="17" rx="5" ry="7" transform="rotate(72 35 17)"/>
+    <ellipse cx="31" cy="30" rx="5" ry="7" transform="rotate(144 31 30)"/>
+    <ellipse cx="17" cy="30" rx="5" ry="7" transform="rotate(216 17 30)"/>
+    <ellipse cx="13" cy="17" rx="5" ry="7" transform="rotate(288 13 17)"/>
+  </g>
+  <circle cx="24" cy="22" r="7" fill="#fff" opacity="0.9"/>
+  <circle cx="24" cy="22" r="4" fill="#e8a0ac"/>
+</svg>
