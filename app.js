@@ -29,9 +29,9 @@
   ];
 
   var FALLBACK_REGIONS = [
-    { id: "riyadh", name: "الرياض", shippingCost: 20 },
-    { id: "makkah", name: "مكة المكرمة", shippingCost: 25 },
-    { id: "eastern", name: "المنطقة الشرقية", shippingCost: 25 },
+    { id: "riyadh", name: "الرياض", shippingCost: 0 },
+    { id: "makkah", name: "مكة المكرمة", shippingCost: 0 },
+    { id: "eastern", name: "المنطقة الشرقية", shippingCost: 0 },
   ];
 
   var state = {
@@ -237,7 +237,7 @@
         regions.forEach(function (r) {
           var opt = document.createElement("option");
           opt.value = r.id;
-          opt.textContent = r.name + " (" + fmtPrice(r.shippingCost) + " توصيل)";
+          opt.textContent = r.name;
           select.appendChild(opt);
         });
       })
@@ -252,7 +252,7 @@
         FALLBACK_REGIONS.forEach(function (r) {
           var opt = document.createElement("option");
           opt.value = r.id;
-          opt.textContent = r.name + " (" + fmtPrice(r.shippingCost) + " توصيل)";
+          opt.textContent = r.name;
           select.appendChild(opt);
         });
       });
@@ -266,10 +266,9 @@
   function updateCheckoutSummary() {
     var subtotal = cartTotal();
     var region = selectedRegion();
-    var shipping = region ? region.shippingCost : 0;
     $("#summarySubtotal").textContent = fmtPrice(subtotal);
-    $("#summaryShipping").textContent = region ? fmtPrice(shipping) : "—";
-    $("#summaryTotal").textContent = fmtPrice(subtotal + shipping);
+    $("#summaryShipping").textContent = region ? "مجاني" : "—";
+    $("#summaryTotal").textContent = fmtPrice(subtotal);
   }
 
   // -------------------------------------------------------------------

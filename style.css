@@ -1155,6 +1155,11 @@ a { color: inherit; text-decoration: none; }
   margin-top: 4px;
 }
 
+.summary-free-ship span:last-child {
+  color: var(--brand-green-dark);
+  font-weight: 900;
+}
+
 .cod-note {
   background: var(--cream);
   border-radius: 8px;

@@ -6,19 +6,19 @@
   var PRODUCT_ID = new URLSearchParams(window.location.search).get("id") || "scar-gel-tcm";
 
   var FALLBACK_REGIONS = [
-    { id: "riyadh", name: "الرياض", shippingCost: 20 },
-    { id: "makkah", name: "مكة المكرمة", shippingCost: 25 },
-    { id: "madinah", name: "المدينة المنورة", shippingCost: 25 },
-    { id: "eastern", name: "المنطقة الشرقية", shippingCost: 25 },
-    { id: "qassim", name: "القصيم", shippingCost: 30 },
-    { id: "asir", name: "عسير", shippingCost: 35 },
-    { id: "tabuk", name: "تبوك", shippingCost: 35 },
-    { id: "hail", name: "حائل", shippingCost: 30 },
-    { id: "northern_borders", name: "الحدود الشمالية", shippingCost: 40 },
-    { id: "jazan", name: "جازان", shippingCost: 35 },
-    { id: "najran", name: "نجران", shippingCost: 40 },
-    { id: "bahah", name: "الباحة", shippingCost: 35 },
-    { id: "jouf", name: "الجوف", shippingCost: 40 },
+    { id: "riyadh", name: "الرياض", shippingCost: 0 },
+    { id: "makkah", name: "مكة المكرمة", shippingCost: 0 },
+    { id: "madinah", name: "المدينة المنورة", shippingCost: 0 },
+    { id: "eastern", name: "المنطقة الشرقية", shippingCost: 0 },
+    { id: "qassim", name: "القصيم", shippingCost: 0 },
+    { id: "asir", name: "عسير", shippingCost: 0 },
+    { id: "tabuk", name: "تبوك", shippingCost: 0 },
+    { id: "hail", name: "حائل", shippingCost: 0 },
+    { id: "northern_borders", name: "الحدود الشمالية", shippingCost: 0 },
+    { id: "jazan", name: "جازان", shippingCost: 0 },
+    { id: "najran", name: "نجران", shippingCost: 0 },
+    { id: "bahah", name: "الباحة", shippingCost: 0 },
+    { id: "jouf", name: "الجوف", shippingCost: 0 },
   ];
 
   var INFOGRAPHICS = [
@@ -64,26 +64,20 @@
   function orderTotal() {
     var p = state.product;
     if (!p) return 0;
-    var region = selectedRegion();
-    var shipping = region ? region.shippingCost : 0;
-    return p.price * state.qty + shipping;
+    return p.price * state.qty;
   }
 
   function updateOrderSummary() {
     var p = state.product;
     if (!p) return;
-    var region = selectedRegion();
     var subtotal = p.price * state.qty;
-    var shipping = region ? region.shippingCost : 0;
     var subtotalEl = $("#pdSummarySubtotal");
-    var shippingEl = $("#pdSummaryShipping");
     var totalEl = $("#pdOrderTotal");
     if (subtotalEl) subtotalEl.textContent = fmtPrice(subtotal);
-    if (shippingEl) shippingEl.textContent = region ? fmtPrice(shipping) : "—";
-    if (totalEl) totalEl.textContent = fmtPrice(subtotal + shipping);
+    if (totalEl) totalEl.textContent = fmtPrice(subtotal);
     var submitBtn = $("#pdOrderSubmit");
     if (submitBtn) {
-      submitBtn.innerHTML = 'اطلب الآن — <span>' + fmtPrice(subtotal + shipping) + "</span>";
+      submitBtn.innerHTML = 'اطلب الآن — <span>' + fmtPrice(subtotal) + "</span>";
     }
   }
 
@@ -264,7 +258,7 @@
             '<ul class="pd-pills">' +
               '<li>💵 الدفع عند الاستلام</li>' +
               '<li>📦 افحصي المنتج قبل الدفع</li>' +
-              '<li>🚚 توصيل داخل المملكة</li>' +
+              '<li>🚚 توصيل مجاني داخل المملكة</li>' +
               (isScarGel ? '<li>🌿 تركيبة TCM لطيفة</li>' : '') +
             '</ul>' +
             '<div class="pd-order-box" id="pdOrder">' +
@@ -297,7 +291,7 @@
                 '</div>' +
                 '<div class="pd-order-summary">' +
                   '<div class="summary-row"><span>المنتج</span><span id="pdSummarySubtotal">' + fmtPrice(p.price) + '</span></div>' +
-                  '<div class="summary-row"><span>التوصيل</span><span id="pdSummaryShipping">—</span></div>' +
+                  '<div class="summary-row summary-free-ship"><span>التوصيل</span><span>مجاني 🚚</span></div>' +
                   '<div class="summary-row summary-total"><span>الإجمالي</span><span id="pdOrderTotal">' + fmtPrice(p.price) + '</span></div>' +
                 '</div>' +
                 '<div class="cod-note">💵 الدفع عند الاستلام — لا حاجة لبطاقة بنكية</div>' +
