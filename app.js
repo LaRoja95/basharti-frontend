@@ -20,7 +20,7 @@
       name: "جل مرهم لإزالة آثار الندبات وحب الشباب",
       description: "تركيبة TCM بسنتيلا آسياتيكا ونياسيناميد — 30 جرام.",
       price: 199,
-      image: "assets/products/scar-gel/hero-product.png?v=2",
+      image: "assets/products/scar-gel/hero-product.png?v=3",
     },
     { id: "serum-vitc", name: "سيروم فيتامين سي للوجه", description: "سيروم مضاد للأكسدة لتفتيح وتوحيد لون البشرة", price: 89, image: "" },
     { id: "cream-hydra", name: "كريم ترطيب مكثف", description: "ترطيب عميق لمدة 24 ساعة لجميع أنواع البشرة", price: 69, image: "" },

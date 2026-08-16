@@ -60,7 +60,7 @@
       : "";
 
     var heroImg = isScarGel
-      ? "assets/products/scar-gel/hero-product.png?v=2"
+      ? "assets/products/scar-gel/hero-product.png?v=3"
       : (p.image || "assets/products/placeholder.svg");
 
     var highlightsSection = isScarGel
