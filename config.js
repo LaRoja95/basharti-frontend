@@ -1,6 +1,8 @@
 // Basharti (بشرتي) storefront config
 window.BASHARTI_CONFIG = {
-  API_BASE: "https://basharti-basharti-backend.ezlcbl.easypanel.host",
+  // Empty = same-origin /api/ (proxied by nginx) — works on bacharati.store
+  API_BASE: "",
+  STORE_URL: "https://bacharati.store",
   TIKTOK_PIXEL_ID: "",
 
   PRODUCT_META: {
