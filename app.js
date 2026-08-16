@@ -491,12 +491,24 @@
           });
       })
       .then(function (prepared) {
+        var items = state.cart.map(function (i) {
+          var p = state.products[i.productId];
+          return {
+            name: p ? p.name : i.productId,
+            quantity: i.quantity,
+            price: p ? p.price : 0,
+          };
+        });
         form.reset();
         state.cart = [];
         saveCart();
         updateCartCount();
         closeCheckout();
-        showThankYou(prepared.orderId);
+        goToThankYou(prepared, {
+          name: payload.name,
+          regionName: prepared.regionName,
+          items: items,
+        });
       })
       .catch(function (err) {
         errorEl.textContent = err.message || "حدث خطأ، حاول مرة أخرى.";
@@ -508,12 +520,20 @@
       });
   }
 
-  function showThankYou(orderId) {
-    $("#thankYouOrderId").textContent = orderId;
-    $("#thankYouOverlay").hidden = false;
+  function goToThankYou(prepared, details) {
+    try {
+      sessionStorage.setItem("basharti:lastOrder", JSON.stringify({
+        orderId: prepared.orderId,
+        total: prepared.total,
+        subtotal: prepared.subtotal,
+        shipping: prepared.shipping || 0,
+        regionName: prepared.regionName || details.regionName || "",
+        name: details.name || "",
+        items: details.items || [],
+      }));
+    } catch (e) {}
+    window.location.href = "thank-you.html?order=" + encodeURIComponent(prepared.orderId);
   }
-
-  function closeThankYou() { $("#thankYouOverlay").hidden = true; }
 
   // -------------------------------------------------------------------
   // Event wiring
@@ -558,15 +578,11 @@
       case "close-checkout":
         closeCheckout();
         break;
-      case "close-thankyou":
-        closeThankYou();
-        break;
       case "go-shop":
         evt.preventDefault();
         closeCart();
         closeProduct();
         closeCheckout();
-        closeThankYou();
         window.scrollTo({ top: 0, behavior: "smooth" });
         break;
     }

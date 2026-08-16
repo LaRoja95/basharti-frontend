@@ -110,6 +110,21 @@
     if (nameInput) setTimeout(function () { nameInput.focus(); }, 400);
   }
 
+  function goToThankYou(prepared, details) {
+    try {
+      sessionStorage.setItem("basharti:lastOrder", JSON.stringify({
+        orderId: prepared.orderId,
+        total: prepared.total,
+        subtotal: prepared.subtotal,
+        shipping: prepared.shipping || 0,
+        regionName: prepared.regionName || details.regionName || "",
+        name: details.name || "",
+        items: details.items || [],
+      }));
+    } catch (e) {}
+    window.location.href = "thank-you.html?order=" + encodeURIComponent(prepared.orderId);
+  }
+
   function submitOrder(evt) {
     evt.preventDefault();
     var form = evt.target;
@@ -162,12 +177,12 @@
           });
       })
       .then(function (prepared) {
-        form.reset();
-        state.qty = 1;
-        $("#pdQty").textContent = "1";
-        updateOrderSummary();
-        $("#pdThankYouOrderId").textContent = prepared.orderId;
-        $("#pdThankYouOverlay").hidden = false;
+        var p = state.product;
+        goToThankYou(prepared, {
+          name: form.name.value.trim(),
+          regionName: region.name,
+          items: [{ name: p ? p.name : "منتج", quantity: state.qty, price: p ? p.price : 0 }],
+        });
       })
       .catch(function (err) {
         errorEl.textContent = err.message || "حدث خطأ، حاول مرة أخرى.";
@@ -338,9 +353,6 @@
     $("#pdRegionSelect").addEventListener("change", updateOrderSummary);
     $("#stickyAddBtn").addEventListener("click", scrollToOrder);
     document.querySelector(".pd-scroll-order").addEventListener("click", scrollToOrder);
-    $("#pdThankYouClose").addEventListener("click", function () {
-      $("#pdThankYouOverlay").hidden = true;
-    });
   }
 
   fetch(apiUrl("/api/products/" + encodeURIComponent(PRODUCT_ID)))
