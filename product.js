@@ -3,8 +3,23 @@
 
   var CONFIG = window.BASHARTI_CONFIG || {};
   var API_BASE = (CONFIG.API_BASE || "").replace(/\/$/, "");
-  var CART_KEY = "basharti_cart_v1";
   var PRODUCT_ID = new URLSearchParams(window.location.search).get("id") || "scar-gel-tcm";
+
+  var FALLBACK_REGIONS = [
+    { id: "riyadh", name: "الرياض", shippingCost: 20 },
+    { id: "makkah", name: "مكة المكرمة", shippingCost: 25 },
+    { id: "madinah", name: "المدينة المنورة", shippingCost: 25 },
+    { id: "eastern", name: "المنطقة الشرقية", shippingCost: 25 },
+    { id: "qassim", name: "القصيم", shippingCost: 30 },
+    { id: "asir", name: "عسير", shippingCost: 35 },
+    { id: "tabuk", name: "تبوك", shippingCost: 35 },
+    { id: "hail", name: "حائل", shippingCost: 30 },
+    { id: "northern_borders", name: "الحدود الشمالية", shippingCost: 40 },
+    { id: "jazan", name: "جازان", shippingCost: 35 },
+    { id: "najran", name: "نجران", shippingCost: 40 },
+    { id: "bahah", name: "الباحة", shippingCost: 35 },
+    { id: "jouf", name: "الجوف", shippingCost: 40 },
+  ];
 
   var INFOGRAPHICS = [
     { src: "assets/products/scar-gel/v01-hero.png", alt: "تعزيز تجديد البشرة وتحسين مظهر الندبات" },
@@ -18,6 +33,12 @@
     { src: "assets/products/scar-gel/v07-specs.png", alt: "مواصفات المنتج — 30 جرام" },
   ];
 
+  var state = {
+    product: null,
+    regions: {},
+    qty: 1,
+  };
+
   function $(sel) { return document.querySelector(sel); }
 
   function fmtPrice(n) { return n.toLocaleString("ar-SA") + " ر.س"; }
@@ -28,25 +49,144 @@
     });
   }
 
-  function loadCart() {
-    try { return JSON.parse(localStorage.getItem(CART_KEY) || "[]"); } catch (e) { return []; }
+  function apiUrl(path) { return API_BASE + path; }
+
+  function newEventId() {
+    if (window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID();
+    return "ev-" + Date.now() + "-" + Math.random().toString(16).slice(2);
   }
 
-  function saveCart(cart) {
-    try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (e) {}
+  function selectedRegion() {
+    var select = $("#pdRegionSelect");
+    return select ? state.regions[select.value] : null;
   }
 
-  function addToCart(product, qty) {
-    var cart = loadCart();
-    var existing = cart.find(function (i) { return i.productId === product.id; });
-    if (existing) existing.quantity = Math.min(10, existing.quantity + qty);
-    else cart.push({ productId: product.id, quantity: qty });
-    saveCart(cart);
-    sessionStorage.setItem("basharti:openCart", "1");
-    window.location.href = "index.html";
+  function orderTotal() {
+    var p = state.product;
+    if (!p) return 0;
+    var region = selectedRegion();
+    var shipping = region ? region.shippingCost : 0;
+    return p.price * state.qty + shipping;
+  }
+
+  function updateOrderSummary() {
+    var p = state.product;
+    if (!p) return;
+    var region = selectedRegion();
+    var subtotal = p.price * state.qty;
+    var shipping = region ? region.shippingCost : 0;
+    var subtotalEl = $("#pdSummarySubtotal");
+    var shippingEl = $("#pdSummaryShipping");
+    var totalEl = $("#pdOrderTotal");
+    if (subtotalEl) subtotalEl.textContent = fmtPrice(subtotal);
+    if (shippingEl) shippingEl.textContent = region ? fmtPrice(shipping) : "—";
+    if (totalEl) totalEl.textContent = fmtPrice(subtotal + shipping);
+    var submitBtn = $("#pdOrderSubmit");
+    if (submitBtn) {
+      submitBtn.innerHTML = 'اطلب الآن — <span>' + fmtPrice(subtotal + shipping) + "</span>";
+    }
+  }
+
+  function fillRegions(regions) {
+    state.regions = {};
+    regions.forEach(function (r) { state.regions[r.id] = r; });
+    var select = $("#pdRegionSelect");
+    if (!select) return;
+    select.innerHTML = '<option value="" disabled selected>اختر منطقتك</option>';
+    regions.forEach(function (r) {
+      var opt = document.createElement("option");
+      opt.value = r.id;
+      opt.textContent = r.name;
+      select.appendChild(opt);
+    });
+    updateOrderSummary();
+  }
+
+  function loadRegions() {
+    fetch(apiUrl("/api/regions"))
+      .then(function (res) { if (!res.ok) throw new Error("bad status"); return res.json(); })
+      .then(fillRegions)
+      .catch(function () { fillRegions(FALLBACK_REGIONS); });
+  }
+
+  function scrollToOrder() {
+    var box = $("#pdOrder");
+    if (box) box.scrollIntoView({ behavior: "smooth", block: "start" });
+    var nameInput = $("#pdOrderForm input[name=name]");
+    if (nameInput) setTimeout(function () { nameInput.focus(); }, 400);
+  }
+
+  function submitOrder(evt) {
+    evt.preventDefault();
+    var form = evt.target;
+    var errorEl = $("#pdOrderError");
+    var submitBtn = $("#pdOrderSubmit");
+    var p = state.product;
+    if (!p) return;
+
+    errorEl.hidden = true;
+
+    var regionId = form.regionId.value;
+    var region = state.regions[regionId];
+    if (!regionId || !region) {
+      errorEl.textContent = "الرجاء اختيار المنطقة";
+      errorEl.hidden = false;
+      return;
+    }
+
+    var payload = {
+      name: form.name.value.trim(),
+      phone: form.phone.value.trim(),
+      regionId: regionId,
+      city: region.name,
+      address: form.address.value.trim(),
+      items: [{ productId: p.id, quantity: state.qty }],
+    };
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "جاري إرسال الطلب...";
+
+    fetch(apiUrl("/api/orders/prepare"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then(function (res) {
+        if (!res.ok) return res.json().then(function (e) { throw new Error(e.detail || "تعذر إرسال الطلب"); });
+        return res.json();
+      })
+      .then(function (prepared) {
+        var completeEventId = newEventId();
+        return fetch(apiUrl("/api/orders/complete"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderId: prepared.orderId, eventId: completeEventId }),
+        })
+          .then(function (res) {
+            if (!res.ok) throw new Error("تعذر تأكيد الطلب");
+            return prepared;
+          });
+      })
+      .then(function (prepared) {
+        form.reset();
+        state.qty = 1;
+        $("#pdQty").textContent = "1";
+        updateOrderSummary();
+        $("#pdThankYouOrderId").textContent = prepared.orderId;
+        $("#pdThankYouOverlay").hidden = false;
+      })
+      .catch(function (err) {
+        errorEl.textContent = err.message || "حدث خطأ، حاول مرة أخرى.";
+        errorEl.hidden = false;
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+        updateOrderSummary();
+      });
   }
 
   function renderProduct(p) {
+    state.product = p;
     var page = $("#productPage");
     var isScarGel = p.id === "scar-gel-tcm" || PRODUCT_ID === "scar-gel-tcm";
     var gallery = isScarGel
@@ -127,13 +267,44 @@
               '<li>🚚 توصيل داخل المملكة</li>' +
               (isScarGel ? '<li>🌿 تركيبة TCM لطيفة</li>' : '') +
             '</ul>' +
-            '<div class="pd-qty-row">' +
-              '<button type="button" class="pd-qty-btn" data-action="dec">−</button>' +
-              '<span id="pdQty">1</span>' +
-              '<button type="button" class="pd-qty-btn" data-action="inc">+</button>' +
+            '<div class="pd-order-box" id="pdOrder">' +
+              '<h2 class="pd-order-title">اطلب الآن</h2>' +
+              '<p class="pd-order-sub">املأ بياناتك وسنتصل بك لتأكيد التوصيل</p>' +
+              '<form id="pdOrderForm" class="pd-order-form">' +
+                '<label class="pd-field">' +
+                  '<span class="pd-field-label">الاسم الكامل</span>' +
+                  '<input type="text" name="name" required minlength="2" maxlength="80" placeholder="مثال: فاطمة أحمد" autocomplete="name" />' +
+                '</label>' +
+                '<label class="pd-field">' +
+                  '<span class="pd-field-label">رقم الجوال</span>' +
+                  '<input type="tel" name="phone" required placeholder="05xxxxxxxx" inputmode="numeric" autocomplete="tel" />' +
+                '</label>' +
+                '<label class="pd-field">' +
+                  '<span class="pd-field-label">المنطقة</span>' +
+                  '<select name="regionId" id="pdRegionSelect" required>' +
+                    '<option value="" disabled selected>اختر منطقتك</option>' +
+                  '</select>' +
+                '</label>' +
+                '<label class="pd-field">' +
+                  '<span class="pd-field-label">العنوان</span>' +
+                  '<textarea name="address" required minlength="5" maxlength="240" rows="3" placeholder="المدينة، الحي، الشارع، رقم المنزل"></textarea>' +
+                '</label>' +
+                '<div class="pd-qty-row pd-qty-row--form">' +
+                  '<span class="pd-qty-label">الكمية</span>' +
+                  '<button type="button" class="pd-qty-btn" data-action="dec" aria-label="تقليل">−</button>' +
+                  '<span id="pdQty">1</span>' +
+                  '<button type="button" class="pd-qty-btn" data-action="inc" aria-label="زيادة">+</button>' +
+                '</div>' +
+                '<div class="pd-order-summary">' +
+                  '<div class="summary-row"><span>المنتج</span><span id="pdSummarySubtotal">' + fmtPrice(p.price) + '</span></div>' +
+                  '<div class="summary-row"><span>التوصيل</span><span id="pdSummaryShipping">—</span></div>' +
+                  '<div class="summary-row summary-total"><span>الإجمالي</span><span id="pdOrderTotal">' + fmtPrice(p.price) + '</span></div>' +
+                '</div>' +
+                '<div class="cod-note">💵 الدفع عند الاستلام — لا حاجة لبطاقة بنكية</div>' +
+                '<p class="form-error" id="pdOrderError" hidden></p>' +
+                '<button type="submit" class="btn btn-primary btn-block pd-order-submit" id="pdOrderSubmit">اطلب الآن — <span>' + fmtPrice(p.price) + '</span></button>' +
+              '</form>' +
             '</div>' +
-            '<button class="btn btn-primary btn-block pd-add-btn" id="addToCartBtn">أضف إلى السلة — ' + fmtPrice(p.price) + '</button>' +
-            '<p class="pd-note muted">سنتواصل معك بعد الطلب لتأكيد التوصيل. الدفع عند الاستلام فقط.</p>' +
           '</div>' +
         '</div>' +
       '</section>' +
@@ -142,9 +313,9 @@
       specsSection +
       '<section class="pd-bottom-cta">' +
         '<div class="container pd-bottom-cta-inner">' +
-          '<h2>جاهزة للطلب؟</h2>' +
-          '<p>اطلبي الآن وادفعي عند الاستلام بعد ما تتأكدي من المنتج.</p>' +
-          '<button class="btn btn-primary pd-add-btn-bottom">أضف للسلة — ' + fmtPrice(p.price) + '</button>' +
+          '<h2>جاهز للطلب؟</h2>' +
+          '<p>اطلب الآن وادفع عند الاستلام بعد ما تتأكد من المنتج.</p>' +
+          '<button type="button" class="btn btn-light pd-scroll-order">اطلب الآن</button>' +
         '</div>' +
       '</section>'
     );
@@ -152,29 +323,31 @@
     $("#stickyPrice").textContent = fmtPrice(p.price);
     $("#stickyBar").hidden = false;
 
-    var qty = 1;
-    function getQty() { return qty; }
-    function setQty(n) { qty = Math.max(1, Math.min(10, n)); $("#pdQty").textContent = qty; }
+    loadRegions();
 
     document.addEventListener("click", function (e) {
       var btn = e.target.closest("[data-action]");
       if (!btn) return;
-      if (btn.getAttribute("data-action") === "inc") setQty(getQty() + 1);
-      if (btn.getAttribute("data-action") === "dec") setQty(getQty() - 1);
+      if (btn.getAttribute("data-action") === "inc") {
+        state.qty = Math.min(10, state.qty + 1);
+        $("#pdQty").textContent = state.qty;
+        updateOrderSummary();
+      }
+      if (btn.getAttribute("data-action") === "dec") {
+        state.qty = Math.max(1, state.qty - 1);
+        $("#pdQty").textContent = state.qty;
+        updateOrderSummary();
+      }
     });
 
-    function handleAdd() { addToCart(p, getQty()); }
-
-    $("#addToCartBtn").addEventListener("click", handleAdd);
-    $("#stickyAddBtn").addEventListener("click", handleAdd);
-    document.querySelector(".pd-add-btn-bottom").addEventListener("click", handleAdd);
-    $("#goCartBtn").addEventListener("click", function () {
-      sessionStorage.setItem("basharti:openCart", "1");
-      window.location.href = "index.html";
+    $("#pdOrderForm").addEventListener("submit", submitOrder);
+    $("#pdRegionSelect").addEventListener("change", updateOrderSummary);
+    $("#stickyAddBtn").addEventListener("click", scrollToOrder);
+    document.querySelector(".pd-scroll-order").addEventListener("click", scrollToOrder);
+    $("#pdThankYouClose").addEventListener("click", function () {
+      $("#pdThankYouOverlay").hidden = true;
     });
   }
-
-  function apiUrl(path) { return API_BASE + path; }
 
   fetch(apiUrl("/api/products/" + encodeURIComponent(PRODUCT_ID)))
     .then(function (res) {

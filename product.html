@@ -27,7 +27,7 @@
       <img src="assets/brand/logo-basharti.png?v=2" alt="بشرتي BASHARTI" class="logo-img" width="140" height="48" />
     </a>
     <a href="index.html" class="btn btn-outline pd-back">← المتجر</a>
-    <button class="cart-btn" id="goCartBtn" aria-label="السلة">🛍️ السلة</button>
+    <a href="#pdOrder" class="btn btn-primary pd-header-order">اطلب الآن</a>
   </div>
 </header>
 
@@ -41,7 +41,17 @@
       <strong id="stickyPrice">199 ر.س</strong>
       <span class="muted">الدفع عند الاستلام</span>
     </div>
-    <button class="btn btn-primary" id="stickyAddBtn">أضف للسلة</button>
+    <button class="btn btn-primary" id="stickyAddBtn">اطلب الآن</button>
+  </div>
+</div>
+
+<div class="overlay" id="pdThankYouOverlay" hidden>
+  <div class="modal thankyou-modal">
+    <div class="thankyou-icon">✅</div>
+    <h2>تم استلام طلبك!</h2>
+    <p>رقم الطلب: <strong id="pdThankYouOrderId"></strong></p>
+    <p class="muted">سنتصل بك قريباً لتأكيد التوصيل. الدفع عند الاستلام — افحص المنتج قبل الدفع.</p>
+    <button class="btn btn-primary" id="pdThankYouClose">حسناً</button>
   </div>
 </div>
 
