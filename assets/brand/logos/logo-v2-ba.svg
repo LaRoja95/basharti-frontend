@@ -1,0 +1,18 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="(41*J  -1A (">
+  <defs>
+    <linearGradient id="v2g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e8a0ac"/>
+      <stop offset="1" stop-color="#9e4a58"/>
+    </linearGradient>
+    <linearGradient id="v2wave" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7eb8b0" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#d4a574" stop-opacity="0.6"/>
+    </linearGradient>
+  </defs>
+  <rect width="120" height="120" rx="28" fill="#fbf3ee"/>
+  <!-- skin wave -->
+  <path d="M18 88 C38 72, 52 96, 72 82 C88 70, 98 78, 102 84" fill="none" stroke="url(#v2wave)" stroke-width="4" stroke-linecap="round"/>
+  <!-- stylized ( -->
+  <path d="M68 28 C48 28, 38 42, 38 58 C38 78, 52 88, 68 88 C78 88, 84 82, 84 74 C84 66, 78 62, 70 62 L54 62 C54 62, 54 48, 68 48 C76 48, 80 44, 80 38 C80 32, 76 28, 68 28 Z" fill="url(#v2g)"/>
+  <circle cx="72" cy="74" r="5" fill="#d1717f"/>
+</svg>

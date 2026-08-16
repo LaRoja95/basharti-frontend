@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>معاينة لوغو بشرتي</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --rose: #e8a0ac;
+  --rose-dark: #d1717f;
+  --rose-deep: #9e4a58;
+  --cream: #fbf3ee;
+  --text: #3a2c2e;
+  --muted: #8a7679;
+  --border: #e5e0d0;
+  --radius: 16px;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Tajawal', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  line-height: 1.6;
+}
+.wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px 48px; }
+h1 { font-size: clamp(26px, 4vw, 36px); font-weight: 900; color: var(--rose-deep); margin: 0 0 8px; }
+.lead { color: var(--muted); margin: 0 0 28px; font-size: 16px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 8px 28px rgba(158, 74, 88, 0.07);
+}
+.card-head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.card-head h2 { margin: 0; font-size: 17px; font-weight: 900; color: var(--rose-deep); }
+.badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(232, 160, 172, 0.2);
+  color: var(--rose-dark);
+  white-space: nowrap;
+}
+.badge.rec { background: var(--rose-deep); color: white; }
+.preview {
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  min-height: 200px;
+  justify-content: center;
+}
+.preview.cream { background: var(--cream); }
+.preview.white { background: #fff; }
+.preview.dark { background: var(--rose-deep); }
+.preview.dark .mock-header { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); }
+.icon-lg { width: 100px; height: 100px; }
+.lockup { width: min(100%, 280px); height: auto; }
+.mock-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.mock-header img { height: 36px; width: auto; }
+.mock-header span { font-weight: 900; color: var(--rose-dark); font-size: 18px; }
+.card-foot {
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  background: #faf8f6;
+}
+.back {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-weight: 800;
+  color: var(--rose-dark);
+  text-decoration: none;
+  font-size: 14px;
+}
+.back:hover { text-decoration: underline; }
+.note {
+  margin-top: 28px;
+  padding: 16px 18px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 14px;
+}
+.note strong { color: var(--rose-deep); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="index.html" class="back">← رجوع للمتجر</a>
+  <h1>معاينة لوغو «بشرتي»</h1>
+  <p class="lead">4 اتجاهات تصميم — اختاري اللي يعجبك وقوليلي رقمها (1، 2، 3 أو 4) باش نطبّقها في المتجر.</p>
+
+  <div class="grid">
+
+    <article class="card">
+      <div class="card-head">
+        <h2>① بتلة + بشرة</h2>
+        <span class="badge rec">موصى به</span>
+      </div>
+      <div class="preview cream">
+        <img src="assets/brand/logos/logo-v1-petal.svg" alt="" class="icon-lg" />
+        <img src="assets/brand/logos/lockup-v1.svg" alt="بشرتي lockup" class="lockup" />
+        <div class="mock-header">
+          <img src="assets/brand/logos/logo-v1-petal.svg" alt="" width="36" height="36" />
+          <span>بشرتي</span>
+        </div>
+      </div>
+      <p class="card-foot">أنثوي، طبيعي، يرمز للعناية بالبشرة. الأفضل للموقع والإعلانات.</p>
+    </article>
+
+    <article class="card">
+      <div class="card-head">
+        <h2>② حرف «ب»</h2>
+        <span class="badge">Minimal</span>
+      </div>
+      <div class="preview white">
+        <img src="assets/brand/logos/logo-v2-ba.svg" alt="" class="icon-lg" />
+        <img src="assets/brand/logos/lockup-v2.svg" alt="" class="lockup" />
+        <div class="mock-header">
+          <img src="assets/brand/logos/logo-v2-ba.svg" alt="" width="36" height="36" />
+          <span>بشرتي</span>
+        </div>
+      </div>
+      <p class="card-foot">الحرف الأول من «بشرتي» + موجة بشرة. عصري وواضح.</p>
+    </article>
+
+    <article class="card">
+      <div class="card-head">
+        <h2>③ قطرات سيروم</h2>
+        <span class="badge">ديرمو</span>
+      </div>
+      <div class="preview cream">
+        <img src="assets/brand/logos/logo-v3-drops.svg" alt="" class="icon-lg" />
+        <img src="assets/brand/logos/lockup-v3.svg" alt="" class="lockup" />
+        <div class="mock-header">
+          <img src="assets/brand/logos/logo-v3-drops.svg" alt="" width="36" height="36" />
+          <span>بشرتي</span>
+        </div>
+      </div>
+      <p class="card-foot">ترطيب · امتصاص · تركيبة. مناسب لمنتجات العناية العلاجية.</p>
+    </article>
+
+    <article class="card">
+      <div class="card-head">
+        <h2>④ Wordmark</h2>
+        <span class="badge">كلاسيك</span>
+      </div>
+      <div class="preview white">
+        <img src="assets/brand/logos/logo-v4-wordmark.svg" alt="" class="lockup" style="width:220px" />
+        <img src="assets/brand/logos/lockup-v4.svg" alt="" class="lockup" />
+        <div class="mock-header" style="justify-content:center">
+          <img src="assets/brand/logos/logo-v4-wordmark.svg" alt="" style="height:32px;width:auto" />
+        </div>
+      </div>
+      <p class="card-foot">الاسم فقط بخط قوي — سهل التذكر والطباعة.</p>
+    </article>
+
+  </div>
+
+  <div class="preview dark" style="margin-top:24px;border-radius:var(--radius);padding:32px 20px">
+    <p style="color:rgba(255,255,255,0.85);margin:0 0 16px;font-weight:800;text-align:center">معاينة على خلفية غامقة (Footer)</p>
+    <div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:center">
+      <img src="assets/brand/logos/lockup-v1.svg" alt="" class="lockup" style="filter:brightness(1.05)" />
+      <img src="assets/brand/logos/logo-v4-wordmark.svg" alt="" style="width:200px;filter:brightness(1.1)" />
+    </div>
+  </div>
+
+  <p class="note">
+    <strong>اللوغو الحالي في المتجر:</strong> النسخة ① (بتلة).<br>
+    افتحي هاد الصفحة بعد Deploy: <code>logos.html</code> على موقع بشرتي.
+  </p>
+</div>
+</body>
+</html>
