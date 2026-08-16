@@ -5,6 +5,48 @@
   var API_BASE = (CONFIG.API_BASE || "").replace(/\/$/, "");
   var PRODUCT_ID = new URLSearchParams(window.location.search).get("id") || "scar-gel-tcm";
 
+  var FALLBACK_PRODUCTS = {
+    "scar-gel-tcm": {
+      id: "scar-gel-tcm",
+      name: "جل مرهم لإزالة آثار الندبات وحب الشباب",
+      description: "تركيبة TCM بسنتيلا آسياتيكا ونياسيناميد — 30 جرام.",
+      price: 199,
+      image: "assets/products/scar-gel/hero-product.png?v=3",
+    },
+    "niacinamide-txa-serum": {
+      id: "niacinamide-txa-serum",
+      name: "سيروم نياسيناميد 10% + TXA لتفتيح البقع",
+      description: "سيروم مركز للبقع والتصبغات — 30 مل.",
+      price: 189,
+      image: "assets/products/niacinamide-serum/hero.svg",
+    },
+    "spf50-centella-sunscreen": {
+      id: "spf50-centella-sunscreen",
+      name: "واقي شمس SPF 50+ بسنتيلا آسياتيكا",
+      description: "حماية يومية SPF 50+ — 50 مل.",
+      price: 189,
+      image: "assets/products/spf50-sunscreen/hero.svg",
+    },
+    "ceramide-barrier-cream": {
+      id: "ceramide-barrier-cream",
+      name: "كريم حاجز البشرة — سيراميد + هيالورون",
+      description: "ترطيب وتقوية حاجز البشرة — 50 جم.",
+      price: 189,
+      image: "assets/products/ceramide-cream/hero.svg",
+    },
+  };
+
+  function getProfile(productId) {
+    var profiles = CONFIG.PRODUCT_PROFILES || {};
+    return profiles[productId] || profiles["scar-gel-tcm"] || {};
+  }
+
+  function getHeroImage(p) {
+    var meta = (CONFIG.PRODUCT_META || {})[p.id];
+    if (p.id === "scar-gel-tcm") return "assets/products/scar-gel/hero-product.png?v=3";
+    return (meta && meta.image) || p.image || "assets/products/placeholder.svg";
+  }
+
   var FALLBACK_REGIONS = [
     { id: "riyadh", name: "الرياض", shippingCost: 0 },
     { id: "makkah", name: "مكة المكرمة", shippingCost: 0 },
@@ -197,8 +239,18 @@
   function renderProduct(p) {
     state.product = p;
     var page = $("#productPage");
-    var isScarGel = p.id === "scar-gel-tcm" || PRODUCT_ID === "scar-gel-tcm";
-    var gallery = isScarGel
+    var profile = getProfile(p.id);
+    var heroImg = getHeroImage(p);
+
+    var highlightsSection = profile.highlights && profile.highlights.length
+      ? ('<section class="pd-highlights"><div class="container"><h2 class="section-title">لماذا هذا المنتج؟</h2><div class="pd-highlight-grid">' +
+          profile.highlights.map(function (h) {
+            return '<div class="pd-highlight"><span>' + h.icon + '</span><strong>' + escapeHtml(h.title) +
+              '</strong><p>' + escapeHtml(h.text) + '</p></div>';
+          }).join("") + '</div></div></section>')
+      : "";
+
+    var gallery = profile.gallery
       ? INFOGRAPHICS.map(function (img, i) {
           return (
             '<figure class="pd-info-card">' +
@@ -208,25 +260,7 @@
         }).join("")
       : "";
 
-    var heroImg = isScarGel
-      ? "assets/products/scar-gel/hero-product.png?v=3"
-      : (p.image || "assets/products/placeholder.svg");
-
-    var highlightsSection = isScarGel
-      ? ('<section class="pd-highlights">' +
-          '<div class="container">' +
-            '<h2 class="section-title">لماذا هذا المنتج؟</h2>' +
-            '<div class="pd-highlight-grid">' +
-              '<div class="pd-highlight"><span>🛡️</span><strong>حماية</strong><p>يساعد على تقليل ظهور الندبات بعد الجروح والعمليات</p></div>' +
-              '<div class="pd-highlight"><span>✨</span><strong>توحيد اللون</strong><p>نياسيناميد وأربيوتين لدعم مظهر أكثر توازناً</p></div>' +
-              '<div class="pd-highlight"><span>💧</span><strong>ترطيب</strong><p>هيالورونات الصوديوم لترطيب دون دهون</p></div>' +
-              '<div class="pd-highlight"><span>🌿</span><strong>لطيف</strong><p>قوام شفاف سريع الامتصاص — لجميع أنواع البشرة</p></div>' +
-            '</div>' +
-          '</div>' +
-        '</section>')
-      : "";
-
-    var gallerySection = isScarGel
+    var gallerySection = profile.gallery && gallery
       ? ('<section class="pd-gallery">' +
           '<div class="container">' +
             '<div class="section-head">' +
@@ -238,44 +272,41 @@
         '</section>')
       : "";
 
-    var specsSection = isScarGel
+    var specsList = (profile.specs || []).map(function (row) {
+      return '<li><strong>' + escapeHtml(row[0]) + ':</strong> ' + escapeHtml(row[1]) + '</li>';
+    }).join("");
+
+    var specsSection = specsList
       ? ('<section class="pd-specs-text">' +
           '<div class="container">' +
             '<div class="pd-specs-card">' +
               '<h3>مواصفات سريعة</h3>' +
-              '<ul>' +
-                '<li><strong>الوزن الصافي:</strong> 30 جرام</li>' +
-                '<li><strong>النوع:</strong> gel / مرهم شفاف</li>' +
-                '<li><strong>الاستخدام:</strong> يومي — للبالغين</li>' +
-                '<li><strong>أنواع البشرة:</strong> جميع الأنواع</li>' +
-                '<li><strong>المكونات البارزة:</strong> سنتيلا آسياتيكا، نياسيناميد، أربيوتين، هيالورونات الصوديوم</li>' +
-                '<li><strong>الشحن:</strong> داخل المملكة — الدفع عند الاستلام</li>' +
-              '</ul>' +
+              '<ul>' + specsList + '</ul>' +
             '</div>' +
           '</div>' +
         '</section>')
       : "";
 
+    var pills = (profile.pills || ["💵 الدفع عند الاستلام", "🚚 توصيل مجاني"]).map(function (pill) {
+      return '<li>' + escapeHtml(pill) + '</li>';
+    }).join("");
+
     page.innerHTML = (
       '<section class="pd-hero-section">' +
         '<div class="container pd-hero-grid">' +
           '<div class="pd-hero-media">' +
-            '<img src="' + heroImg + '" alt="' + escapeHtml(p.name) + '" class="pd-hero-img" />' +
+            '<img src="' + heroImg + '" alt="' + escapeHtml(p.name) + '" class="pd-hero-img' +
+              (heroImg.indexOf(".svg") !== -1 ? " pd-hero-img--svg" : "") + '" />' +
           '</div>' +
           '<div class="pd-hero-copy">' +
-            '<span class="section-badge">✨ الأكثر طلباً</span>' +
+            '<span class="section-badge">' + escapeHtml(profile.badge || "✨ بشرتي") + '</span>' +
             '<h1>' + escapeHtml(p.name) + '</h1>' +
             '<p class="pd-lead">' + escapeHtml(p.description) + '</p>' +
             '<div class="pd-price-row">' +
               '<strong class="pd-price">' + fmtPrice(p.price) + '</strong>' +
-              (isScarGel ? '<span class="pd-weight">30 جرام · COD</span>' : '<span class="pd-weight">COD</span>') +
+              '<span class="pd-weight">' + escapeHtml(profile.weight || "COD") + '</span>' +
             '</div>' +
-            '<ul class="pd-pills">' +
-              '<li>💵 الدفع عند الاستلام</li>' +
-              '<li>📦 افحصي المنتج قبل الدفع</li>' +
-              '<li>🚚 توصيل مجاني داخل المملكة</li>' +
-              (isScarGel ? '<li>🌿 تركيبة TCM لطيفة</li>' : '') +
-            '</ul>' +
+            '<ul class="pd-pills">' + pills + '</ul>' +
             '<div class="pd-order-box" id="pdOrder">' +
               '<h2 class="pd-order-title">اطلب الآن</h2>' +
               '<p class="pd-order-sub">املأ بياناتك وسنتصل بك لتأكيد التوصيل</p>' +
@@ -329,6 +360,7 @@
       '</section>'
     );
 
+    document.title = p.name + " | بشرتي";
     $("#stickyPrice").textContent = fmtPrice(p.price);
     $("#stickyBar").hidden = false;
 
@@ -360,13 +392,8 @@
       if (!res.ok) throw new Error("not found");
       return res.json();
     })
-    .then(renderProduct)
+    .then(function (p) { renderProduct(Object.assign({ id: PRODUCT_ID }, p)); })
     .catch(function () {
-      renderProduct({
-        id: PRODUCT_ID,
-        name: "جل مرهم لإزالة آثار الندبات وحب الشباب",
-        description: "تركيبة TCM بسنتيلا آسياتيكا ونياسيناميد — لتلطيف مظهر الندبات وآثار حب الشباب وتوحيد لون البشرة.",
-        price: 199,
-      });
+      renderProduct(FALLBACK_PRODUCTS[PRODUCT_ID] || FALLBACK_PRODUCTS["scar-gel-tcm"]);
     });
 })();

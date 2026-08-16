@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 480" role="img" aria-label="H'BJ 4E3 SPF 50">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff9f0"/>
+      <stop offset="100%" stop-color="#fce8cc"/>
+    </linearGradient>
+    <linearGradient id="tube" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fff"/>
+      <stop offset="100%" stop-color="#f5ebe6"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="480" fill="url(#bg)" rx="24"/>
+  <circle cx="320" cy="88" r="36" fill="#ffd966" opacity=".45"/>
+  <text x="200" y="100" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="900" fill="#d4a574">SPF 50+</text>
+  <text x="200" y="128" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#9e4a58">PA++++ · 3F*JD'</text>
+  <ellipse cx="200" cy="280" rx="78" ry="120" fill="url(#tube)" stroke="#e5d0d4" stroke-width="2"/>
+  <rect x="168" y="168" width="64" height="48" rx="10" fill="#fff" stroke="#e5d0d4" stroke-width="2"/>
+  <rect x="148" y="300" width="104" height="80" rx="16" fill="#7eb8b0" opacity=".18"/>
+  <text x="200" y="420" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="800" fill="#9e4a58">(41*J</text>
+  <text x="200" y="448" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#8a7679">H'BJ 4E3 JHEJ · 50 ED</text>
+</svg>

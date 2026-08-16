@@ -22,10 +22,27 @@
       price: 199,
       image: "assets/products/scar-gel/hero-product.png?v=3",
     },
-    { id: "serum-vitc", name: "سيروم فيتامين سي للوجه", description: "سيروم مضاد للأكسدة لتفتيح وتوحيد لون البشرة", price: 89, image: "" },
-    { id: "cream-hydra", name: "كريم ترطيب مكثف", description: "ترطيب عميق لمدة 24 ساعة لجميع أنواع البشرة", price: 69, image: "" },
-    { id: "sunscreen-spf50", name: "واقي شمس SPF 50", description: "حماية عالية من أشعة الشمس بملمس خفيف غير دهني", price: 75, image: "" },
-    { id: "cleanser-gentle", name: "غسول لطيف للوجه", description: "ينظف دون أن يجرد البشرة من رطوبتها الطبيعية", price: 49, image: "" },
+    {
+      id: "niacinamide-txa-serum",
+      name: "سيروم نياسيناميد 10% + TXA لتفتيح البقع",
+      description: "سيروم مركز للبقع والتصبغات — 30 مل.",
+      price: 189,
+      image: "assets/products/niacinamide-serum/hero.svg",
+    },
+    {
+      id: "spf50-centella-sunscreen",
+      name: "واقي شمس SPF 50+ بسنتيلا آسياتيكا",
+      description: "حماية يومية SPF 50+ — 50 مل.",
+      price: 189,
+      image: "assets/products/spf50-sunscreen/hero.svg",
+    },
+    {
+      id: "ceramide-barrier-cream",
+      name: "كريم حاجز البشرة — سيراميد + هيالورون",
+      description: "ترطيب وتقوية حاجز البشرة — 50 جم.",
+      price: 189,
+      image: "assets/products/ceramide-cream/hero.svg",
+    },
   ];
 
   var FALLBACK_REGIONS = [
@@ -159,7 +176,6 @@
     if (img) {
       return '<img src="' + escapeAttr(img) + '" alt="' + escapeAttr(p.name) + '" loading="lazy" />';
     }
-    var meta = productMeta(p.id);
     return (
       '<div class="product-thumb-placeholder" style="background:' + meta.gradient + '">' +
         '<span aria-hidden="true">' + meta.emoji + '</span>' +

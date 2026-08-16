@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 480" role="img" aria-label="3J1HE FJ'3JF'EJ/">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fdf6f3"/>
+      <stop offset="100%" stop-color="#f5ebe6"/>
+    </linearGradient>
+    <linearGradient id="liquid" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f8d4da"/>
+      <stop offset="100%" stop-color="#d1717f"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="480" fill="url(#bg)" rx="24"/>
+  <rect x="148" y="72" width="104" height="28" rx="14" fill="#fff" opacity=".9"/>
+  <text x="200" y="91" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" fill="#9e4a58">NIACINAMIDE 10%</text>
+  <rect x="162" y="118" width="76" height="22" rx="11" fill="#7eb8b0" opacity=".25"/>
+  <text x="200" y="133" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="700" fill="#3d7a72">+ TXA 4%</text>
+  <rect x="130" y="160" width="140" height="240" rx="20" fill="#fff" stroke="#e5d0d4" stroke-width="2"/>
+  <rect x="148" y="200" width="104" height="160" rx="12" fill="url(#liquid)" opacity=".85"/>
+  <rect x="168" y="148" width="64" height="36" rx="8" fill="#fff" stroke="#e5d0d4" stroke-width="2"/>
+  <text x="200" y="420" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="800" fill="#9e4a58">(41*J</text>
+  <text x="200" y="448" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#8a7679">3J1HE 'D*A*J- · 30 ED</text>
+</svg>

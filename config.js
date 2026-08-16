@@ -1,15 +1,113 @@
 // Basharti (بشرتي) storefront config
 window.BASHARTI_CONFIG = {
-  // Empty = same-origin /api/ (proxied by nginx) — works on bacharati.store
   API_BASE: "",
   STORE_URL: "https://bacharati.store",
   TIKTOK_PIXEL_ID: "",
 
   PRODUCT_META: {
-    "scar-gel-tcm":    { emoji: "✨", category: "عناية بالبشرة", gradient: "linear-gradient(135deg, #fff8e1, #d4a574)", image: "assets/products/scar-gel/hero-product.png?v=3" },
-    "serum-vitc":      { emoji: "🍊", category: "سيروم", gradient: "linear-gradient(135deg, #fff3e0, #ffcc80)" },
-    "cream-hydra":     { emoji: "🧴", category: "ترطيب", gradient: "linear-gradient(135deg, #e0f2f1, #7eb8b0)" },
-    "sunscreen-spf50": { emoji: "☀️", category: "حماية", gradient: "linear-gradient(135deg, #fff8e1, #d4a574)" },
-    "cleanser-gentle": { emoji: "🫧", category: "تنظيف", gradient: "linear-gradient(135deg, #f3e5f5, #d1717f)" },
+    "scar-gel-tcm": {
+      emoji: "✨",
+      category: "ندبات · حب الشباب",
+      gradient: "linear-gradient(135deg, #fff8e1, #d4a574)",
+      image: "assets/products/scar-gel/hero-product.png?v=3",
+    },
+    "niacinamide-txa-serum": {
+      emoji: "🔆",
+      category: "بقع · تصبغات",
+      gradient: "linear-gradient(135deg, #fce4ec, #d1717f)",
+      image: "assets/products/niacinamide-serum/hero.svg",
+    },
+    "spf50-centella-sunscreen": {
+      emoji: "☀️",
+      category: "حماية الشمس",
+      gradient: "linear-gradient(135deg, #fff9f0, #d4a574)",
+      image: "assets/products/spf50-sunscreen/hero.svg",
+    },
+    "ceramide-barrier-cream": {
+      emoji: "💧",
+      category: "ترطيب · حاجز البشرة",
+      gradient: "linear-gradient(135deg, #e0f2f1, #7eb8b0)",
+      image: "assets/products/ceramide-cream/hero.svg",
+    },
+  },
+
+  PRODUCT_PROFILES: {
+    "scar-gel-tcm": {
+      badge: "✨ الأكثر طلباً",
+      weight: "30 جرام · COD",
+      pills: ["💵 الدفع عند الاستلام", "📦 افحصي المنتج قبل الدفع", "🚚 توصيل مجاني", "🌿 تركيبة TCM لطيفة"],
+      highlights: [
+        { icon: "🛡️", title: "حماية", text: "يساعد على تقليل ظهور الندبات بعد الجروح والعمليات" },
+        { icon: "✨", title: "توحيد اللون", text: "نياسيناميد وأربيوتين لدعم مظهر أكثر توازناً" },
+        { icon: "💧", title: "ترطيب", text: "هيالورونات الصوديوم لترطيب دون دهون" },
+        { icon: "🌿", title: "لطيف", text: "قوام شفاف سريع الامتصاص — لجميع أنواع البشرة" },
+      ],
+      specs: [
+        ["الوزن الصافي", "30 جرام"],
+        ["النوع", "gel / مرهم شفاف"],
+        ["الاستخدام", "مساءً — يومي"],
+        ["أنواع البشرة", "جميع الأنواع"],
+        ["المكونات البارزة", "سنتيلا آسياتيكا، نياسيناميد، أربيوتين"],
+        ["التوصيل", "مجاني — الدفع عند الاستلام"],
+      ],
+      gallery: true,
+    },
+    "niacinamide-txa-serum": {
+      badge: "🔆 للبقع والتصبغات",
+      weight: "30 مل · COD",
+      pills: ["💵 الدفع عند الاستلام", "🚚 توصيل مجاني", "✨ نياسيناميد 10% + TXA 4%", "🌙 صباحاً ومساءً"],
+      highlights: [
+        { icon: "🎯", title: "استهداف البقع", text: "نياسيناميد وTXA يدعمان تفتيح البقع وآثار حب الشباب" },
+        { icon: "✨", title: "توحيد اللون", text: "مظهر أكثر إشراقاً وتجانساً مع الاستخدام المنتظم" },
+        { icon: "💧", title: "خفيف", text: "قوام سائل سريع الامتصاص — تحت المرطب أو SPF" },
+        { icon: "🤝", title: "مكمل للجل", text: "يرتبط بروتين جل الندبات للحصول على نتيجة أفضل" },
+      ],
+      specs: [
+        ["الحجم", "30 مل"],
+        ["النوع", "سيروم مركز"],
+        ["الاستخدام", "1–2 مرة يومياً"],
+        ["المكونات البارزة", "نياسيناميد 10%، TXA 4%، HA"],
+        ["أنواع البشرة", "جميع الأنواع"],
+        ["التوصيل", "مجاني — الدفع عند الاستلام"],
+      ],
+    },
+    "spf50-centella-sunscreen": {
+      badge: "☀️ حماية يومية",
+      weight: "50 مل · SPF 50+",
+      pills: ["💵 الدفع عند الاستلام", "🚚 توصيل مجاني", "☀️ SPF 50+ PA++++", "🌿 بدون white cast"],
+      highlights: [
+        { icon: "☀️", title: "حماية عالية", text: "SPF 50+ PA++++ — ضروري تحت شمس المملكة" },
+        { icon: "🌿", title: "سنتيلا", text: "يلطّف ويحمي البشرة الحساسة من التهيج" },
+        { icon: "✨", title: "ملمس خفيف", text: "لا يترك طبقة بيضاء — مناسب تحت المكياج" },
+        { icon: "🛡️", title: "وقاية من البقع", text: "يمنع تفاقم التصبغات أثناء العلاج" },
+      ],
+      specs: [
+        ["الحجم", "50 مل"],
+        ["الحماية", "SPF 50+ PA++++"],
+        ["النوع", "كريم واقي يومي"],
+        ["الاستخدام", "كل صباح — آخر خطوة"],
+        ["المكونات البارزة", "سنتيلا، نياسيناميد، مرشحات UV"],
+        ["التوصيل", "مجاني — الدفع عند الاستلام"],
+      ],
+    },
+    "ceramide-barrier-cream": {
+      badge: "💧 حاجز البشرة",
+      weight: "50 جم · COD",
+      pills: ["💵 الدفع عند الاستلام", "🚚 توصيل مجاني", "🧴 سيراميد + HA", "❄️ للجفاف والمكيف"],
+      highlights: [
+        { icon: "🧱", title: "تقوية الحاجز", text: "سيراميد NP يدعم حاجز البشرة ضد الجفاف" },
+        { icon: "💧", title: "ترطيب عميق", text: "هيالورونات وبانثينول لرطوبة تدوم" },
+        { icon: "🌡️", title: "مناخ KSA", text: "مثالي للجفاف — شمس، مكيف، ورياح" },
+        { icon: "🤝", title: "بعد العلاج", text: "يرطّب بعد السيروم أو جل الندبات" },
+      ],
+      specs: [
+        ["الوزن", "50 جم"],
+        ["النوع", "كريم ترطيب"],
+        ["الاستخدام", "صباحاً ومساءً"],
+        ["المكونات البارزة", "سيراميد NP، HA، بانثينول"],
+        ["أنواع البشرة", "جافة · حساسة · عادية"],
+        ["التوصيل", "مجاني — الدفع عند الاستلام"],
+      ],
+    },
   },
 };
