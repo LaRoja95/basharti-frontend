@@ -3,6 +3,7 @@ window.BASHARTI_CONFIG = {
   API_BASE: "",
   STORE_URL: "https://bacharati.store",
   TIKTOK_PIXEL_ID: "",
+  META_PIXEL_ID: "1570480567898006",
 
   PRODUCT_META: {
     "scar-gel-tcm": {
