@@ -3,6 +3,7 @@
 
   var CONFIG = window.BASHARTI_CONFIG || {};
   var API_BASE = (CONFIG.API_BASE || "").replace(/\/$/, "");
+  var TRACK = window.BashartiTracking || {};
   var PRODUCT_ID = new URLSearchParams(window.location.search).get("id") || "scar-gel-tcm";
 
   var FALLBACK_PRODUCTS = {
@@ -15,8 +16,8 @@
     },
     "niacinamide-txa-serum": {
       id: "niacinamide-txa-serum",
-      name: "سيروم نياسيناميد 10% + TXA لتفتيح البقع",
-      description: "سيروم مركز للبقع والتصبغات — 30 مل.",
+      name: "سيروم TXA + نياسيناميد 15% لتفتيح البقع",
+      description: "سيروم مركز — TXA + نياسيناميد 15% + أربوتين — 30 مل.",
       price: 189,
       image: "assets/products/niacinamide-serum/hero.svg",
     },
@@ -33,6 +34,20 @@
       description: "ترطيب وتقوية حاجز البشرة — 50 جم.",
       price: 189,
       image: "assets/products/ceramide-cream/hero.svg",
+    },
+    "arbutin-txa-cream": {
+      id: "arbutin-txa-cream",
+      name: "كريم يومي أربوتين 7% + TXA 4%",
+      description: "ترطيب + توحيد اللون — 50 مل.",
+      price: 189,
+      image: "assets/products/arbutin-cream/hero.svg",
+    },
+    "hair-regrowth-spray": {
+      id: "hair-regrowth-spray",
+      name: "بخاخ دعم نمو الشعر",
+      description: "تركيبة عشبية لفروة الرأس — 50 مل.",
+      price: 199,
+      image: "assets/products/hair-spray/hero.svg",
     },
   };
 
@@ -167,6 +182,20 @@
     window.location.href = "thank-you.html?order=" + encodeURIComponent(prepared.orderId);
   }
 
+  function trackViewContent(p) {
+    if (!TRACK.track) return;
+    TRACK.track("ViewContent", {
+      content_id: p.id,
+      content_name: p.name,
+      currency: "SAR",
+      value: p.price,
+    }, {
+      productIds: [p.id],
+      value: p.price,
+      currency: "SAR",
+    });
+  }
+
   function submitOrder(evt) {
     evt.preventDefault();
     var form = evt.target;
@@ -197,6 +226,20 @@
     submitBtn.disabled = true;
     submitBtn.textContent = "جاري إرسال الطلب...";
 
+    if (TRACK.track) {
+      TRACK.track("InitiateCheckout", {
+        content_id: p.id,
+        content_name: p.name,
+        currency: "SAR",
+        value: p.price * state.qty,
+        content_ids: [p.id],
+      }, {
+        productIds: [p.id],
+        value: p.price * state.qty,
+        currency: "SAR",
+      });
+    }
+
     fetch(apiUrl("/api/orders/prepare"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -208,13 +251,28 @@
       })
       .then(function (prepared) {
         var completeEventId = newEventId();
+        var meta = (TRACK.metaCookies && TRACK.metaCookies()) || { fbp: "", fbc: "" };
         return fetch(apiUrl("/api/orders/complete"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orderId: prepared.orderId, eventId: completeEventId }),
+          body: JSON.stringify({
+            orderId: prepared.orderId,
+            eventId: completeEventId,
+            fbp: meta.fbp,
+            fbc: meta.fbc,
+            eventSourceUrl: window.location.href,
+          }),
         })
           .then(function (res) {
             if (!res.ok) throw new Error("تعذر تأكيد الطلب");
+            if (TRACK.trackBrowserOnly) {
+              TRACK.trackBrowserOnly("CompletePayment", {
+                currency: "SAR",
+                value: prepared.total,
+                content_ids: [p.id],
+                order_id: prepared.orderId,
+              }, completeEventId);
+            }
             return prepared;
           });
       })
@@ -385,6 +443,8 @@
     $("#pdRegionSelect").addEventListener("change", updateOrderSummary);
     $("#stickyAddBtn").addEventListener("click", scrollToOrder);
     document.querySelector(".pd-scroll-order").addEventListener("click", scrollToOrder);
+
+    trackViewContent(p);
   }
 
   fetch(apiUrl("/api/products/" + encodeURIComponent(PRODUCT_ID)))

@@ -15,7 +15,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="assets/brand/logo-basharti.png?v=2" />
 <link rel="apple-touch-icon" href="assets/brand/logo-basharti.png?v=2" />
-<link rel="stylesheet" href="style.css?v=5" />
+<link rel="stylesheet" href="style.css?v=8" />
+<script src="config.js?v=8"></script>
+<script>
+(function () {
+  var id = (window.BASHARTI_CONFIG && window.BASHARTI_CONFIG.META_PIXEL_ID) || "";
+  if (!id) return;
+  !function (f, b, e, v, n, t, s) {
+    if (f.fbq) return;
+    n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+    if (!f._fbq) f._fbq = n;
+    n.push = n; n.loaded = true; n.version = "2.0"; n.queue = [];
+    t = b.createElement(e); t.async = true; t.src = v;
+    s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+  }(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
+  fbq("init", id);
+  fbq("track", "PageView");
+})();
+</script>
+<noscript><img height="1" width="1" style="display:none" alt=""
+  src="https://www.facebook.com/tr?id=1570480567898006&amp;ev=PageView&amp;noscript=1" /></noscript>
 </head>
 <body>
 
@@ -155,9 +174,9 @@
   <section id="products" class="products-section">
     <div class="container">
       <div class="section-head">
-        <span class="section-badge">💄 4 منتجات أساسية</span>
+        <span class="section-badge">💄 6 منتجات مختارة</span>
         <h2 class="section-title">منتجاتنا المميزة</h2>
-        <p class="section-lead">روتين بسيط لبشرة أوضح — ندبات، بقع، حماية من الشمس، وترطيب. كل منتج بـ 189 أو 199 ر.س مع توصيل مجاني والدفع عند الاستلام.</p>
+        <p class="section-lead">روتين كامل للبشرة والشعر — ندبات، بقع، حماية، ترطيب، ونمو الشعر. 189–199 ر.س مع توصيل مجاني والدفع عند الاستلام.</p>
       </div>
       <div id="productGrid" class="product-grid">
         <p class="loading">جاري تحميل المنتجات...</p>
@@ -421,7 +440,7 @@
   </div>
 </div>
 
-<script src="config.js?v=5"></script>
-<script src="app.js?v=5"></script>
+<script src="tracking.js?v=9"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>

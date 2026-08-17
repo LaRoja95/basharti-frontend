@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 480" role="img" aria-label="3pray /9E FEH 'D491">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0f7f4"/>
+      <stop offset="100%" stop-color="#e0efe8"/>
+    </linearGradient>
+    <linearGradient id="bottle" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fff"/>
+      <stop offset="100%" stop-color="#dceee4"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="480" fill="url(#bg)" rx="24"/>
+  <text x="200" y="88" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#3d7a62">HERBAL · SCALP CARE</text>
+  <rect x="155" y="120" width="90" height="48" rx="8" fill="#fff" stroke="#b8d4c8" stroke-width="2"/>
+  <rect x="168" y="168" width="64" height="200" rx="12" fill="url(#bottle)" stroke="#b8d4c8" stroke-width="2"/>
+  <rect x="178" y="200" width="44" height="120" rx="8" fill="#7eb8a0" opacity=".35"/>
+  <circle cx="200" cy="132" r="8" fill="#7eb8a0"/>
+  <text x="200" y="400" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="800" fill="#3d7a62">(41*J</text>
+  <text x="200" y="430" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#5a7a6e">3pray FEH 'D491 · 50 ED</text>
+</svg>

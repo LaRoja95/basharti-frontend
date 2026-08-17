@@ -1,8 +1,7 @@
 /* Basharti (بشرتي) storefront logic.
  * No frameworks — vanilla JS. Talks to the FastAPI backend for products
- * and orders, and mirrors key events to TikTok Pixel (client) + the
- * server-side /api/e relay (CAPI) using a shared event_id per occurrence
- * so TikTok can de-duplicate browser vs. server events correctly.
+ * and orders, and mirrors key events to Meta / TikTok / Snapchat pixels
+ * plus the server-side /api/e TikTok CAPI relay when configured.
  */
 
 (function () {
@@ -10,8 +9,7 @@
 
   var CONFIG = window.BASHARTI_CONFIG || {};
   var API_BASE = (CONFIG.API_BASE || "").replace(/\/$/, "");
-  var PIXEL_ID = CONFIG.TIKTOK_PIXEL_ID || "";
-  var META_PIXEL_ID = CONFIG.META_PIXEL_ID || "";
+  var TRACK = window.BashartiTracking || {};
   var CART_KEY = "basharti_cart_v1";
 
   // Shown if the API is temporarily unreachable (store still browsable).
@@ -25,8 +23,8 @@
     },
     {
       id: "niacinamide-txa-serum",
-      name: "سيروم نياسيناميد 10% + TXA لتفتيح البقع",
-      description: "سيروم مركز للبقع والتصبغات — 30 مل.",
+      name: "سيروم TXA + نياسيناميد 15% لتفتيح البقع",
+      description: "سيروم مركز — TXA + نياسيناميد 15% — 30 مل.",
       price: 189,
       image: "assets/products/niacinamide-serum/hero.svg",
     },
@@ -43,6 +41,20 @@
       description: "ترطيب وتقوية حاجز البشرة — 50 جم.",
       price: 189,
       image: "assets/products/ceramide-cream/hero.svg",
+    },
+    {
+      id: "arbutin-txa-cream",
+      name: "كريم يومي أربوتين 7% + TXA 4% — توحيد اللون",
+      description: "ترطيب يومي + تفتيح البقع — 50 مل.",
+      price: 189,
+      image: "assets/products/arbutin-cream/hero.svg",
+    },
+    {
+      id: "hair-regrowth-spray",
+      name: "بخاخ دعم نمو الشعر — تركيبة عشبية",
+      description: "رذاذ لفروة الرأس — تقوية وتقليل التساقط — 50 مل.",
+      price: 199,
+      image: "assets/products/hair-spray/hero.svg",
     },
   ];
 
@@ -87,93 +99,13 @@
     return API_BASE + path;
   }
 
-  // -------------------------------------------------------------------
-  // TikTok Pixel + server-side CAPI relay
-  // -------------------------------------------------------------------
-  function initPixel() {
-    if (!PIXEL_ID) return;
-    (function (w, d, t) {
-      w.TiktokAnalyticsObject = t;
-      var ttq = (w[t] = w[t] || []);
-      ttq.methods = ["page", "track", "identify", "instances", "debug", "on", "off", "once", "ready", "alias", "group", "enableCookie", "disableCookie", "holdConsent", "revokeConsent", "grantConsent"];
-      ttq.setAndDefer = function (t, e) {
-        t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))); };
-      };
-      for (var i = 0; i < ttq.methods.length; i++) ttq.setAndDefer(ttq, ttq.methods[i]);
-      ttq.instance = function (t) {
-        var e = ttq._i[t] || [];
-        for (var n = 0; n < e.methods.length; n++) ttq.setAndDefer(e, e.methods[n]);
-        return e;
-      };
-      ttq.load = function (e, n) {
-        var r = "https://analytics.tiktok.com/i18n/pixel/events.js";
-        ttq._i = ttq._i || {};
-        ttq._i[e] = [];
-        ttq._i[e]._u = r;
-        ttq._t = ttq._t || {};
-        ttq._t[e] = +new Date();
-        ttq._o = ttq._o || {};
-        ttq._o[e] = n || {};
-        var scriptEl = document.createElement("script");
-        scriptEl.type = "text/javascript";
-        scriptEl.async = true;
-        scriptEl.src = r + "?sdkid=" + e + "&lib=" + t;
-        var firstScript = document.getElementsByTagName("script")[0];
-        firstScript.parentNode.insertBefore(scriptEl, firstScript);
-      };
-      ttq.load(PIXEL_ID);
-      ttq.page();
-    })(window, document, "ttq");
+  function track(eventName, browserProps, capiPayload) {
+    if (TRACK.track) return TRACK.track(eventName, browserProps, capiPayload);
+    return TRACK.newEventId ? TRACK.newEventId() : newEventId();
   }
 
-  function pixelTrack(eventName, properties, eventId) {
-    if (!PIXEL_ID || !window.ttq) return;
-    try {
-      window.ttq.track(eventName, properties || {}, { event_id: eventId });
-    } catch (e) { /* pixel not ready yet — non-fatal */ }
-  }
-
-  function serverTrack(eventName, eventId, orderId, payload) {
-    if (!API_BASE) return;
-    fetch(apiUrl("/api/e"), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        eventName: eventName,
-        eventId: eventId,
-        orderId: orderId || null,
-        payload: payload || {},
-      }),
-    }).catch(function () { /* best-effort, never block the UI on this */ });
-  }
-
-  function initMetaPixel() {
-    if (!META_PIXEL_ID) return;
-    (function (f, b, e, v, n, t, s) {
-      if (f.fbq) return;
-      n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
-      if (!f._fbq) f._fbq = n;
-      n.push = n; n.loaded = true; n.version = "2.0"; n.queue = [];
-      t = b.createElement(e); t.async = true; t.src = v;
-      s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
-    })(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
-    window.fbq("init", META_PIXEL_ID);
-    window.fbq("track", "PageView");
-  }
-
-  function metaTrack(eventName, properties) {
-    if (!META_PIXEL_ID || !window.fbq) return;
-    try { window.fbq("track", eventName, properties || {}); } catch (e) {}
-  }
-
-  // Fires both the browser pixel and the server-side CAPI relay with the
-  // SAME event_id so TikTok de-duplicates them into a single event.
-  function track(eventName, tiktokProperties, capiPayload) {
-    var eventId = newEventId();
-    pixelTrack(eventName, tiktokProperties, eventId);
-    metaTrack(eventName, tiktokProperties);
-    serverTrack(eventName, eventId, null, capiPayload);
-    return eventId;
+  function trackBrowserOnly(eventName, browserProps, eventId) {
+    if (TRACK.trackBrowserOnly) TRACK.trackBrowserOnly(eventName, browserProps, eventId);
   }
 
   // -------------------------------------------------------------------
@@ -504,10 +436,17 @@
       })
       .then(function (prepared) {
         var completeEventId = newEventId();
+        var meta = (TRACK.metaCookies && TRACK.metaCookies()) || { fbp: "", fbc: "" };
         return fetch(apiUrl("/api/orders/complete"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orderId: prepared.orderId, eventId: completeEventId }),
+          body: JSON.stringify({
+            orderId: prepared.orderId,
+            eventId: completeEventId,
+            fbp: meta.fbp,
+            fbc: meta.fbc,
+            eventSourceUrl: window.location.href,
+          }),
         })
           .then(function (res) {
             if (!res.ok) throw new Error("تعذر تأكيد الطلب");
@@ -515,20 +454,13 @@
           })
           .then(function () {
             var contentIds = state.cart.map(function (i) { return i.productId; });
-            pixelTrack("CompletePayment", {
+            trackBrowserOnly("CompletePayment", {
               currency: "SAR",
               value: prepared.total,
               content_ids: contentIds,
+              order_id: prepared.orderId,
             }, completeEventId);
-            metaTrack("Purchase", {
-              currency: "SAR",
-              value: prepared.total,
-              content_ids: contentIds,
-            });
-            // Server already dispatches the CompletePayment CAPI event as
-            // part of /api/orders/complete, so we don't call /api/e here —
-            // this avoids double logging while keeping pixel + CAPI in sync
-            // via the shared completeEventId.
+            // Server dispatches TikTok + Meta CAPI from /api/orders/complete
             return prepared;
           });
       })
@@ -644,8 +576,6 @@
   // -------------------------------------------------------------------
   // Init
   // -------------------------------------------------------------------
-  initPixel();
-  initMetaPixel();
   loadProducts();
   loadRegions();
   updateCartCount();

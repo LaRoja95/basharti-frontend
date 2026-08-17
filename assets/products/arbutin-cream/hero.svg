@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 480" role="img" aria-label="C1JE #1(H*JF H TXA">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff5f8"/>
+      <stop offset="100%" stop-color="#fce4ec"/>
+    </linearGradient>
+    <linearGradient id="jar" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fff"/>
+      <stop offset="100%" stop-color="#f8e8ec"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="480" fill="url(#bg)" rx="24"/>
+  <text x="200" y="88" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" fill="#9e4a58">ARBUTIN 7% + TXA 4%</text>
+  <ellipse cx="200" cy="280" rx="95" ry="28" fill="#e8d0d8" opacity=".5"/>
+  <rect x="115" y="168" width="170" height="200" rx="24" fill="url(#jar)" stroke="#e5c8d0" stroke-width="2"/>
+  <rect x="145" y="148" width="110" height="36" rx="10" fill="#fff" stroke="#e5c8d0" stroke-width="2"/>
+  <rect x="135" y="210" width="130" height="120" rx="16" fill="#f5d0dc" opacity=".7"/>
+  <text x="200" y="400" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="800" fill="#9e4a58">(41*J</text>
+  <text x="200" y="430" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#8a7679">C1JE *H-J/ 'DDHF · 50 ,E</text>
+</svg>
