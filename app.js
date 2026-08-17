@@ -11,6 +11,7 @@
   var CONFIG = window.BASHARTI_CONFIG || {};
   var API_BASE = (CONFIG.API_BASE || "").replace(/\/$/, "");
   var PIXEL_ID = CONFIG.TIKTOK_PIXEL_ID || "";
+  var META_PIXEL_ID = CONFIG.META_PIXEL_ID || "";
   var CART_KEY = "basharti_cart_v1";
 
   // Shown if the API is temporarily unreachable (store still browsable).
@@ -146,11 +147,31 @@
     }).catch(function () { /* best-effort, never block the UI on this */ });
   }
 
+  function initMetaPixel() {
+    if (!META_PIXEL_ID) return;
+    (function (f, b, e, v, n, t, s) {
+      if (f.fbq) return;
+      n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+      if (!f._fbq) f._fbq = n;
+      n.push = n; n.loaded = true; n.version = "2.0"; n.queue = [];
+      t = b.createElement(e); t.async = true; t.src = v;
+      s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+    })(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
+    window.fbq("init", META_PIXEL_ID);
+    window.fbq("track", "PageView");
+  }
+
+  function metaTrack(eventName, properties) {
+    if (!META_PIXEL_ID || !window.fbq) return;
+    try { window.fbq("track", eventName, properties || {}); } catch (e) {}
+  }
+
   // Fires both the browser pixel and the server-side CAPI relay with the
   // SAME event_id so TikTok de-duplicates them into a single event.
   function track(eventName, tiktokProperties, capiPayload) {
     var eventId = newEventId();
     pixelTrack(eventName, tiktokProperties, eventId);
+    metaTrack(eventName, tiktokProperties);
     serverTrack(eventName, eventId, null, capiPayload);
     return eventId;
   }
@@ -499,6 +520,11 @@
               value: prepared.total,
               content_ids: contentIds,
             }, completeEventId);
+            metaTrack("Purchase", {
+              currency: "SAR",
+              value: prepared.total,
+              content_ids: contentIds,
+            });
             // Server already dispatches the CompletePayment CAPI event as
             // part of /api/orders/complete, so we don't call /api/e here —
             // this avoids double logging while keeping pixel + CAPI in sync
@@ -619,6 +645,7 @@
   // Init
   // -------------------------------------------------------------------
   initPixel();
+  initMetaPixel();
   loadProducts();
   loadRegions();
   updateCartCount();
