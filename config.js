@@ -13,7 +13,7 @@ window.BASHARTI_CONFIG = {
       emoji: "✨",
       category: "ندبات · حب الشباب",
       gradient: "linear-gradient(135deg, #fff8e1, #d4a574)",
-      image: "assets/products/scar-gel/hero-product.png?v=1",
+      image: "assets/products/scar-gel/hero-product.png?v=3",
     },
     "niacinamide-txa-serum": {
       emoji: "🔆",

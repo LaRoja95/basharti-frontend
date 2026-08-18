@@ -12,7 +12,7 @@
       name: "جل مرهم لإزالة آثار الندبات وحب الشباب",
       description: "تركيبة TCM بسنتيلا آسياتيكا ونياسيناميد — 30 جرام.",
       price: 199,
-      image: "assets/products/scar-gel/hero-product.png?v=1",
+      image: "assets/products/scar-gel/hero-product.png?v=3",
     },
     "niacinamide-txa-serum": {
       id: "niacinamide-txa-serum",
@@ -54,6 +54,13 @@
   function getProfile(productId) {
     var profiles = CONFIG.PRODUCT_PROFILES || {};
     return profiles[productId] || profiles["scar-gel-tcm"] || {};
+  }
+
+  function getProductMeta(productId) {
+    var meta = (CONFIG.PRODUCT_META || {})[productId] || {};
+    return {
+      gradient: meta.gradient || "linear-gradient(135deg, #fce4ec, #e8a0ac)",
+    };
   }
 
   function getHeroImage(p) {
@@ -298,6 +305,7 @@
     var page = $("#productPage");
     var profile = getProfile(p.id);
     var heroImg = getHeroImage(p);
+    var heroGradient = getProductMeta(p.id).gradient;
 
     var highlightsSection = profile.highlights && profile.highlights.length
       ? ('<section class="pd-highlights"><div class="container"><h2 class="section-title">لماذا هذا المنتج؟</h2><div class="pd-highlight-grid">' +
@@ -352,8 +360,10 @@
       '<section class="pd-hero-section">' +
         '<div class="container pd-hero-grid">' +
           '<div class="pd-hero-media">' +
-            '<img src="' + heroImg + '" alt="' + escapeHtml(p.name) + '" class="pd-hero-img' +
-              (heroImg.indexOf(".svg") !== -1 ? " pd-hero-img--svg" : "") + '" />' +
+            '<div class="pd-hero-frame" style="background:' + heroGradient + '">' +
+              '<img src="' + heroImg + '" alt="' + escapeHtml(p.name) + '" class="pd-hero-img pd-hero-img--photo' +
+                (heroImg.indexOf(".svg") !== -1 ? " pd-hero-img--svg" : "") + '" />' +
+            '</div>' +
           '</div>' +
           '<div class="pd-hero-copy">' +
             '<span class="section-badge">' + escapeHtml(profile.badge || "✨ بشرتي") + '</span>' +

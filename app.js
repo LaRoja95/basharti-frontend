@@ -19,7 +19,7 @@
       name: "جل مرهم لإزالة آثار الندبات وحب الشباب",
       description: "تركيبة TCM بسنتيلا آسياتيكا ونياسيناميد — 30 جرام.",
       price: 199,
-      image: "assets/products/scar-gel/hero-product.png?v=1",
+      image: "assets/products/scar-gel/hero-product.png?v=3",
     },
     {
       id: "niacinamide-txa-serum",
@@ -163,9 +163,10 @@
       return;
     }
     grid.innerHTML = products.map(function (p) {
+      var meta = productMeta(p.id);
       return (
         '<article class="product-card" data-product-id="' + escapeAttr(p.id) + '" data-action="open-product">' +
-          '<div class="product-thumb">' +
+          '<div class="product-thumb" style="background:' + meta.gradient + '">' +
             renderProductCategory(p) +
             renderProductThumb(p) +
           '</div>' +
@@ -248,10 +249,11 @@
     if (!p) return;
     state.activeProductId = productId;
 
+    var meta = productMeta(p.id);
     var thumb = renderProductThumb(p);
 
     $("#productModalBody").innerHTML = (
-      '<div class="product-modal-thumb">' + thumb + "</div>" +
+      '<div class="product-modal-thumb" style="background:' + meta.gradient + '">' + thumb + "</div>" +
       '<p class="muted" style="margin:0 0 8px;font-weight:800">' + escapeHtml(productMeta(p.id).category) + '</p>' +
       "<h2>" + escapeHtml(p.name) + "</h2>" +
       '<p class="muted">' + escapeHtml(p.description || "") + "</p>" +
