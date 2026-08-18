@@ -12,42 +12,42 @@
       name: "جل مرهم لإزالة آثار الندبات وحب الشباب",
       description: "تركيبة TCM بسنتيلا آسياتيكا ونياسيناميد — 30 جرام.",
       price: 199,
-      image: "assets/products/scar-gel/hero-product.png?v=3",
+      image: "assets/products/scar-gel/hero-product.png?v=1",
     },
     "niacinamide-txa-serum": {
       id: "niacinamide-txa-serum",
       name: "سيروم TXA + نياسيناميد 15% لتفتيح البقع",
       description: "سيروم مركز — TXA + نياسيناميد 15% + أربوتين — 30 مل.",
       price: 189,
-      image: "assets/products/niacinamide-serum/hero.svg",
+      image: "assets/products/niacinamide-serum/hero-product.png?v=1",
     },
     "spf50-centella-sunscreen": {
       id: "spf50-centella-sunscreen",
       name: "واقي شمس SPF 50+ بسنتيلا آسياتيكا",
       description: "حماية يومية SPF 50+ — 50 مل.",
       price: 189,
-      image: "assets/products/spf50-sunscreen/hero.svg",
+      image: "assets/products/spf50-sunscreen/hero-product.png?v=1",
     },
     "ceramide-barrier-cream": {
       id: "ceramide-barrier-cream",
       name: "كريم حاجز البشرة — سيراميد + هيالورون",
       description: "ترطيب وتقوية حاجز البشرة — 50 جم.",
       price: 189,
-      image: "assets/products/ceramide-cream/hero.svg",
+      image: "assets/products/ceramide-cream/hero-product.png?v=1",
     },
     "arbutin-txa-cream": {
       id: "arbutin-txa-cream",
       name: "كريم يومي أربوتين 7% + TXA 4%",
       description: "ترطيب + توحيد اللون — 50 مل.",
       price: 189,
-      image: "assets/products/arbutin-cream/hero.svg",
+      image: "assets/products/arbutin-cream/hero-product.png?v=1",
     },
     "hair-regrowth-spray": {
       id: "hair-regrowth-spray",
       name: "بخاخ دعم نمو الشعر",
       description: "تركيبة عشبية لفروة الرأس — 50 مل.",
       price: 199,
-      image: "assets/products/hair-spray/hero.svg",
+      image: "assets/products/hair-spray/hero-product.png?v=1",
     },
   };
 
@@ -58,7 +58,6 @@
 
   function getHeroImage(p) {
     var meta = (CONFIG.PRODUCT_META || {})[p.id];
-    if (p.id === "scar-gel-tcm") return "assets/products/scar-gel/hero-product.png?v=3";
     return (meta && meta.image) || p.image || "assets/products/placeholder.svg";
   }
 
