@@ -1,0 +1,293 @@
+/* Profit calculator — internal admin styles */
+
+.pc-body {
+  margin: 0;
+  font-family: 'Tajawal', sans-serif;
+  background: #f4f6f8;
+  color: #1a1a2e;
+  line-height: 1.5;
+}
+
+.pc-topbar {
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pc-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  color: #9e4a58;
+}
+
+.pc-brand span {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.pc-back {
+  font-size: 14px;
+  font-weight: 800;
+  color: #9e4a58;
+  text-decoration: none;
+}
+
+.pc-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.pc-title {
+  margin: 0 0 6px;
+  font-size: clamp(22px, 3vw, 28px);
+  font-weight: 900;
+}
+
+.pc-sub {
+  margin: 0 0 24px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.pc-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .pc-grid-2 { grid-template-columns: 1fr; }
+}
+
+.pc-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+}
+
+.pc-card h2 {
+  margin: 0 0 16px;
+  font-size: 17px;
+  font-weight: 900;
+  color: #1e293b;
+}
+
+.pc-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 600px) {
+  .pc-fields { grid-template-columns: 1fr; }
+}
+
+.pc-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  color: #475569;
+  margin-bottom: 6px;
+}
+
+.pc-field input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 15px;
+}
+
+.pc-field small {
+  display: block;
+  margin-top: 4px;
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.pc-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+
+@media (max-width: 700px) {
+  .pc-stats { grid-template-columns: 1fr; }
+}
+
+.pc-stat {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+  text-align: center;
+}
+
+.pc-stat-label {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.pc-stat-value {
+  font-size: 22px;
+  font-weight: 900;
+  margin-top: 4px;
+}
+
+.pc-cod-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 20px;
+}
+
+@media (max-width: 800px) {
+  .pc-cod-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.pc-cod-item {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+}
+
+.pc-cod-item strong {
+  display: block;
+  font-size: 18px;
+  color: #c2410c;
+}
+
+.pc-cod-item span {
+  font-size: 11px;
+  color: #9a3412;
+}
+
+.pc-section {
+  margin-top: 20px;
+}
+
+.pc-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.pc-metric {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.pc-metric-label {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.pc-metric-value {
+  font-size: 20px;
+  font-weight: 900;
+  margin-top: 4px;
+}
+
+.pc-metric-note {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+.pc-scale-rows {
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.pc-scale-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px dashed #e2e8f0;
+}
+
+.pc-scale-row:last-child { border-bottom: none; }
+
+.pc-scale-total {
+  font-size: 24px;
+  font-weight: 900;
+  text-align: center;
+  margin: 12px 0;
+}
+
+.pc-scale-footer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.pc-scale-metric {
+  text-align: center;
+  font-weight: 900;
+  font-size: 16px;
+}
+
+.pos { color: #15803d; }
+.neg { color: #dc2626; }
+
+.pc-admin-row {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.pc-admin-row input {
+  flex: 1;
+  min-width: 180px;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.pc-btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  background: #9e4a58;
+  color: #fff;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.pc-note {
+  margin-top: 20px;
+  padding: 14px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #1e40af;
+}
