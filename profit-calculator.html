@@ -6,171 +6,202 @@
 <meta name="robots" content="noindex, nofollow" />
 <title>حاسبة الأرباح | بشرتي — داخلي</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="profit-calculator.css?v=1" />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="profit-calculator.css?v=2" />
 </head>
 <body class="pc-body">
 
-<header class="pc-topbar">
-  <div class="pc-brand">
-    <strong>بشرتي</strong>
-    <span>Profit Calculator · COD</span>
+<header class="pc-site-header">
+  <div class="pc-header-inner">
+    <a href="index.html" class="pc-logo">
+      <img src="assets/brand/logo-basharti.png?v=2" alt="بشرتي" width="120" height="42" />
+    </a>
+    <nav class="pc-nav" aria-label="التنقل">
+      <a href="index.html">الرئيسية</a>
+      <a href="index.html#products">المنتجات</a>
+      <a href="index.html#brand">عن بشرتي</a>
+      <a href="index.html#faq">تواصل</a>
+    </nav>
   </div>
-  <a href="index.html" class="pc-back">← المتجر</a>
 </header>
 
+<div class="pc-tabs-bar">
+  <div class="pc-tabs">
+    <span class="pc-tab">Overview</span>
+    <span class="pc-tab">Orders</span>
+    <span class="pc-tab pc-tab--active">Profit Calculator</span>
+  </div>
+</div>
+
+<p class="pc-notice">Metrics only count valid Saudi, non-VPN traffic after backend IP screening.</p>
+
 <main class="pc-wrap">
-  <h1 class="pc-title">حاسبة الأرباح</h1>
-  <p class="pc-sub">خططي الإعلانات قبل الإطلاق — معدّة لمتجر COD في السعودية (189–199 ر.س)</p>
+
+  <section class="pc-card">
+    <h2 class="pc-card-title">Inputs &amp; Assumptions</h2>
+    <div class="pc-fields pc-fields--4">
+      <div class="pc-field">
+        <label for="aovSar">AOV (SAR)</label>
+        <input type="number" id="aovSar" value="195" min="1" step="1" />
+        <small>Live dashboard value</small>
+      </div>
+      <div class="pc-field">
+        <label for="sarUsd">SAR → USD Rate</label>
+        <input type="number" id="sarUsd" value="0.2667" min="0.01" step="0.0001" />
+        <small>Default: 1 SAR = 0.2667 USD</small>
+      </div>
+      <div class="pc-field">
+        <label for="unitPriceSar">Unit Selling Price (SAR)</label>
+        <input type="number" id="unitPriceSar" value="195" min="1" step="1" />
+      </div>
+      <div class="pc-field">
+        <label for="productCostUsd">Product Cost / Unit (USD)</label>
+        <input type="number" id="productCostUsd" value="4" min="0" step="0.1" />
+      </div>
+      <div class="pc-field">
+        <label for="cplUsd">Cost per Lead (USD)</label>
+        <input type="number" id="cplUsd" value="0" min="0" step="0.01" />
+      </div>
+      <div class="pc-field">
+        <label for="confirmRate">Confirmation Rate (%)</label>
+        <input type="number" id="confirmRate" value="45" min="1" max="100" step="1" />
+      </div>
+      <div class="pc-field">
+        <label for="deliveryRate">Delivery Rate (%)</label>
+        <input type="number" id="deliveryRate" value="60" min="1" max="100" step="1" />
+      </div>
+      <div class="pc-field">
+        <label for="leadsScale">Leads at Scale</label>
+        <input type="number" id="leadsScale" value="1000" min="1" step="1" />
+      </div>
+    </div>
+
+    <div class="pc-stats">
+      <div class="pc-stat pc-stat--primary">
+        <div class="pc-stat-label">AOV (USD)</div>
+        <div class="pc-stat-value" id="statAovUsd">$0</div>
+      </div>
+      <div class="pc-stat pc-stat--tan">
+        <div class="pc-stat-label">Avg Pieces / Order</div>
+        <div class="pc-stat-value" id="statPieces">1</div>
+      </div>
+      <div class="pc-stat pc-stat--tan">
+        <div class="pc-stat-label">Net / Delivered (ex-ads)</div>
+        <div class="pc-stat-value" id="statNetDelivered">+$0</div>
+      </div>
+    </div>
+
+    <div class="pc-admin-row">
+      <input type="password" id="adminToken" placeholder="ADMIN_TOKEN — لجلب AOV الحقيقي" />
+      <button type="button" class="pc-btn" id="btnLoadAov">جلب AOV من الطلبات</button>
+      <span class="pc-admin-status" id="loadAovStatus"></span>
+    </div>
+  </section>
+
+  <section class="pc-card">
+    <h2 class="pc-card-title pc-card-title--upper">Your COD Cost Structure</h2>
+    <div class="pc-cod-fees">
+      <div class="pc-cod-fee">
+        <div class="pc-cod-fee-label">Per Confirmed Lead</div>
+        <div class="pc-cod-fee-value" id="codDisplayConfirmed">$1.70</div>
+        <div class="pc-cod-fee-desc">Confirmation fee</div>
+        <input type="number" id="codConfirmed" value="1.7" min="0" step="0.01" class="pc-cod-input" aria-label="Per confirmed" />
+      </div>
+      <div class="pc-cod-fee">
+        <div class="pc-cod-fee-label">Per Delivered Order</div>
+        <div class="pc-cod-fee-value" id="codDisplayDelivered">$4.00</div>
+        <div class="pc-cod-fee-desc">Delivery fee</div>
+        <input type="number" id="codDelivered" value="4" min="0" step="0.01" class="pc-cod-input" aria-label="Per delivered" />
+      </div>
+      <div class="pc-cod-fee">
+        <div class="pc-cod-fee-label">Per Returned Order</div>
+        <div class="pc-cod-fee-value" id="codDisplayReturned">$1.30</div>
+        <div class="pc-cod-fee-desc">Return fee</div>
+        <input type="number" id="codReturned" value="1.3" min="0" step="0.01" class="pc-cod-input" aria-label="Per returned" />
+      </div>
+      <div class="pc-cod-fee">
+        <div class="pc-cod-fee-label">Per Fulfilled Order</div>
+        <div class="pc-cod-fee-value" id="codDisplayFulfilled">$0.80</div>
+        <div class="pc-cod-fee-desc">Leaves warehouse</div>
+        <input type="number" id="codFulfilled" value="0.8" min="0" step="0.01" class="pc-cod-input" aria-label="Per fulfilled" />
+      </div>
+    </div>
+  </section>
 
   <div class="pc-grid-2">
     <section class="pc-card">
-      <h2>Inputs &amp; Assumptions</h2>
-      <div class="pc-fields">
-        <div class="pc-field">
-          <label for="aovSar">AOV (SAR)</label>
-          <input type="number" id="aovSar" value="195" min="1" step="1" />
-          <small>متوسط قيمة الطلب — بشرتي 189–199</small>
+      <h2 class="pc-card-title">Section 1 — Breakeven Thresholds</h2>
+      <div class="pc-be-grid">
+        <div class="pc-be-metric pc-be-metric--highlight" id="beProfitCard">
+          <div class="pc-be-label">Current Profit Per Lead</div>
+          <div class="pc-be-value" id="beProfitLead">+$0</div>
+          <div class="pc-be-note" id="beProfitNote"></div>
         </div>
-        <div class="pc-field">
-          <label for="sarUsd">SAR → USD</label>
-          <input type="number" id="sarUsd" value="0.2667" min="0.01" step="0.0001" />
-          <small>1 SAR ≈ 0.2667 USD</small>
+        <div class="pc-be-metric">
+          <div class="pc-be-label">Breakeven Delivery Rate</div>
+          <div class="pc-be-value" id="beDelivery">0%</div>
+          <div class="pc-be-note" id="beDeliveryNote"></div>
         </div>
-        <div class="pc-field">
-          <label for="unitPriceSar">سعر قطعة (SAR)</label>
-          <input type="number" id="unitPriceSar" value="195" min="1" step="1" />
+        <div class="pc-be-metric">
+          <div class="pc-be-label">Max Affordable CPL</div>
+          <div class="pc-be-value" id="beCpl">$0</div>
+          <div class="pc-be-note" id="beCplNote"></div>
         </div>
-        <div class="pc-field">
-          <label for="productCostUsd">تكلفة المنتج / قطعة (USD)</label>
-          <input type="number" id="productCostUsd" value="4" min="0" step="0.1" />
-          <small>سعر الشراء + شحن من المورد</small>
-        </div>
-        <div class="pc-field">
-          <label for="cplUsd">Cost per Lead (USD)</label>
-          <input type="number" id="cplUsd" value="0" min="0" step="0.01" />
-          <small>تكلفة Lead من Meta/TikTok</small>
-        </div>
-        <div class="pc-field">
-          <label for="confirmRate">Confirmation Rate (%)</label>
-          <input type="number" id="confirmRate" value="45" min="1" max="100" step="1" />
-        </div>
-        <div class="pc-field">
-          <label for="deliveryRate">Delivery Rate (%)</label>
-          <input type="number" id="deliveryRate" value="60" min="1" max="100" step="1" />
-        </div>
-        <div class="pc-field">
-          <label for="leadsScale">Leads at Scale</label>
-          <input type="number" id="leadsScale" value="1000" min="1" step="1" />
-        </div>
-      </div>
-
-      <div class="pc-stats">
-        <div class="pc-stat">
-          <div class="pc-stat-label">AOV (USD)</div>
-          <div class="pc-stat-value" id="statAovUsd">$0</div>
-        </div>
-        <div class="pc-stat">
-          <div class="pc-stat-label">Avg Pieces / Order</div>
-          <div class="pc-stat-value" id="statPieces">1</div>
-        </div>
-        <div class="pc-stat">
-          <div class="pc-stat-label">Net / Delivered (ex-ads)</div>
-          <div class="pc-stat-value pos" id="statNetDelivered">+$0</div>
-        </div>
-      </div>
-
-      <div class="pc-admin-row">
-        <input type="password" id="adminToken" placeholder="ADMIN_TOKEN (اختياري — لجلب AOV الحقيقي)" />
-        <button type="button" class="pc-btn" id="btnLoadAov">جلب AOV من الطلبات</button>
-        <span id="loadAovStatus" style="font-size:12px;color:#64748b"></span>
-      </div>
-    </section>
-
-    <section class="pc-card">
-      <h2>Your COD Cost Structure</h2>
-      <div class="pc-cod-grid">
-        <div class="pc-field">
-          <label for="codConfirmed">Per Confirmed</label>
-          <input type="number" id="codConfirmed" value="1.7" min="0" step="0.01" />
-        </div>
-        <div class="pc-field">
-          <label for="codDelivered">Per Delivered</label>
-          <input type="number" id="codDelivered" value="4" min="0" step="0.01" />
-        </div>
-        <div class="pc-field">
-          <label for="codReturned">Per Returned</label>
-          <input type="number" id="codReturned" value="1.3" min="0" step="0.01" />
-        </div>
-        <div class="pc-field">
-          <label for="codFulfilled">Per Fulfilled</label>
-          <input type="number" id="codFulfilled" value="0.8" min="0" step="0.01" />
-        </div>
-      </div>
-      <div class="pc-cod-grid" style="margin-top:12px">
-        <div class="pc-cod-item"><strong>$1.70</strong><span>Confirmation fee</span></div>
-        <div class="pc-cod-item"><strong>$4.00</strong><span>Delivery fee</span></div>
-        <div class="pc-cod-item"><strong>$1.30</strong><span>Return fee</span></div>
-        <div class="pc-cod-item"><strong>$0.80</strong><span>Leaves warehouse</span></div>
-      </div>
-    </section>
-  </div>
-
-  <div class="pc-grid-2 pc-section">
-    <section class="pc-card">
-      <h2>Section 1 — Breakeven Thresholds</h2>
-      <div class="pc-metrics">
-        <div class="pc-metric">
-          <div class="pc-metric-label">Current Profit Per Lead</div>
-          <div class="pc-metric-value pos" id="beProfitLead">+$0</div>
-        </div>
-        <div class="pc-metric">
-          <div class="pc-metric-label">Breakeven Delivery Rate</div>
-          <div class="pc-metric-value" id="beDelivery">0%</div>
-          <div class="pc-metric-note" id="beDeliveryNote"></div>
-        </div>
-        <div class="pc-metric">
-          <div class="pc-metric-label">Max Affordable CPL</div>
-          <div class="pc-metric-value" id="beCpl">$0</div>
-          <div class="pc-metric-note" id="beCplNote"></div>
-        </div>
-        <div class="pc-metric">
-          <div class="pc-metric-label">Breakeven Confirmation Rate</div>
-          <div class="pc-metric-value" id="beConfirm">0%</div>
-          <div class="pc-metric-note" id="beConfirmNote"></div>
+        <div class="pc-be-metric">
+          <div class="pc-be-label">Breakeven Confirmation Rate</div>
+          <div class="pc-be-value" id="beConfirm">0%</div>
+          <div class="pc-be-note" id="beConfirmNote"></div>
         </div>
       </div>
     </section>
 
     <section class="pc-card">
-      <h2>Section 2 — Profit at Scale</h2>
-      <p style="margin:0 0 12px;font-size:14px;color:#64748b" id="scaleFunnel">—</p>
-      <div class="pc-scale-rows">
-        <div class="pc-scale-row"><span>Revenue</span><strong id="scaleRevenue">$0</strong></div>
-        <div class="pc-scale-row"><span>Ad Spend</span><strong id="scaleAdSpend">-$0</strong></div>
-        <div class="pc-scale-row"><span>Product Cost</span><strong id="scaleProduct">-$0</strong></div>
-        <div class="pc-scale-row"><span>Confirmation Fees</span><strong id="scaleConfirm">-$0</strong></div>
-        <div class="pc-scale-row"><span>Fulfillment Fees</span><strong id="scaleFulfill">-$0</strong></div>
-        <div class="pc-scale-row"><span>Delivery Fees</span><strong id="scaleDelivery">-$0</strong></div>
-        <div class="pc-scale-row"><span>Return Fees</span><strong id="scaleReturn">-$0</strong></div>
-        <div class="pc-scale-row"><span>Total Costs</span><strong id="scaleTotalCost">-$0</strong></div>
+      <h2 class="pc-card-title">Section 2 — Profit at Scale</h2>
+      <p class="pc-scale-sub" id="scaleSub">Full P&amp;L projection for <span id="scaleLeadCount">1,000</span> leads</p>
+      <div class="pc-funnel">
+        <div class="pc-funnel-item"><span>Leads</span><strong id="scaleLeads">0</strong></div>
+        <div class="pc-funnel-item"><span>Confirmed</span><strong id="scaleConfirmed">0</strong></div>
+        <div class="pc-funnel-item"><span>Delivered</span><strong id="scaleDelivered">0</strong></div>
       </div>
-      <div class="pc-scale-total pos" id="scaleNet">+$0</div>
+      <div class="pc-pl-rows">
+        <div class="pc-pl-row pc-pl-row--revenue"><span>Revenue</span><strong id="scaleRevenue">$0</strong></div>
+        <div class="pc-pl-row"><span>Ad Spend</span><strong class="neg" id="scaleAdSpend">-$0</strong></div>
+        <div class="pc-pl-row"><span>Product Costs</span><strong class="neg" id="scaleProduct">-$0</strong></div>
+        <div class="pc-pl-row"><span>Confirmation Fees</span><strong class="neg" id="scaleConfirm">-$0</strong></div>
+        <div class="pc-pl-row"><span>Fulfillment Fees</span><strong class="neg" id="scaleFulfill">-$0</strong></div>
+        <div class="pc-pl-row"><span>Delivery Fees</span><strong class="neg" id="scaleDelivery">-$0</strong></div>
+        <div class="pc-pl-row"><span>Return Fees</span><strong class="neg" id="scaleReturn">-$0</strong></div>
+        <div class="pc-pl-row pc-pl-row--total"><span>Total Costs</span><strong class="neg" id="scaleTotalCost">-$0</strong></div>
+      </div>
+      <div class="pc-net-profit" id="scaleNet">+$0</div>
       <div class="pc-scale-footer">
-        <div><small>ROI</small><div class="pc-scale-metric pos" id="scaleRoi">+0%</div></div>
-        <div><small>Profit / Lead</small><div class="pc-scale-metric pos" id="scalePpl">+$0</div></div>
-        <div><small>Profit / Delivery</small><div class="pc-scale-metric pos" id="scalePpd">+$0</div></div>
+        <div class="pc-scale-foot-item">
+          <span>ROI</span>
+          <strong id="scaleRoi">+0%</strong>
+        </div>
+        <div class="pc-scale-foot-item">
+          <span>Per Lead</span>
+          <strong id="scalePpl">+$0</strong>
+        </div>
+        <div class="pc-scale-foot-item">
+          <span>Per Delivery</span>
+          <strong id="scalePpd">+$0</strong>
+        </div>
       </div>
     </section>
   </div>
-
-  <p class="pc-note">
-    <strong>ملاحظة:</strong> هذه أداة داخلية لبشرتي — غير مرتبطة بالمتجر العام. عدّلي CPL وتكلفة المنتج قبل كل حملة.
-    الرابط: <code>profit-calculator.html</code> (لا تشاركيه علناً).
-  </p>
 </main>
 
+<footer class="pc-trust">
+  <div class="pc-trust-inner">
+    <div class="pc-trust-item"><span>🚚</span><div><strong>شحن سريع داخل السعودية</strong><small>2–5 أيام عمل</small></div></div>
+    <div class="pc-trust-item"><span>💵</span><div><strong>الدفع عند الاستلام</strong><small>افحصي قبل الدفع</small></div></div>
+    <div class="pc-trust-item"><span>🛡️</span><div><strong>ضمان 30 يوم</strong><small>استرجاع مضمون</small></div></div>
+    <div class="pc-trust-item"><span>✓</span><div><strong>منتجات موثوقة</strong><small>100% أصلية</small></div></div>
+  </div>
+</footer>
+
 <script src="config.js?v=1"></script>
-<script src="profit-calculator.js?v=1"></script>
+<script src="profit-calculator.js?v=2"></script>
 </body>
 </html>

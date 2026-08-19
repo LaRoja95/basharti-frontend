@@ -32,6 +32,10 @@
     return num(id, fallback) / 100;
   }
 
+  function fmtUsdPlain(n) {
+    return "$" + Math.abs(n).toFixed(2);
+  }
+
   function fmtUsd(n) {
     var sign = n < 0 ? "-" : "+";
     return sign + "$" + Math.abs(n).toFixed(2);
@@ -145,26 +149,52 @@
     var inp = inputs();
     var scale = project(inp.leadsScale, inp);
     var unit = project(1, inp);
+    var beDelivery = solveDeliveryBreakeven(inp, inp.leadsScale);
+    var beConfirm = solveConfirmBreakeven(inp, inp.leadsScale);
+    var maxCpl = maxAffordableCpl(inp, inp.leadsScale);
 
     $("statAovUsd").textContent = "$" + scale.aovUsd.toFixed(2);
     $("statPieces").textContent = scale.pieces.toFixed(2);
     $("statNetDelivered").textContent = fmtUsd(scale.netPerDeliveredExAds);
     $("statNetDelivered").className = "pc-stat-value " + (scale.netPerDeliveredExAds >= 0 ? "pos" : "neg");
 
-    $("beProfitLead").textContent = fmtUsd(unit.profitPerLead);
-    $("beProfitLead").className = "pc-metric-value " + (unit.profitPerLead >= 0 ? "pos" : "neg");
-    $("beDelivery").textContent = fmtPct(solveDeliveryBreakeven(inp, inp.leadsScale));
-    $("beDeliveryNote").textContent = "Current: " + Math.round(inp.deliveryRate * 100) + "%";
-    $("beCpl").textContent = "$" + maxAffordableCpl(inp, inp.leadsScale).toFixed(2);
-    $("beCplNote").textContent = "Current CPL: $" + inp.cplUsd.toFixed(2);
-    $("beConfirm").textContent = fmtPct(solveConfirmBreakeven(inp, inp.leadsScale));
-    $("beConfirmNote").textContent = "Current: " + Math.round(inp.confirmRate * 100) + "%";
+    $("codDisplayConfirmed").textContent = fmtUsdPlain(inp.codConfirmed);
+    $("codDisplayDelivered").textContent = fmtUsdPlain(inp.codDelivered);
+    $("codDisplayReturned").textContent = fmtUsdPlain(inp.codReturned);
+    $("codDisplayFulfilled").textContent = fmtUsdPlain(inp.codFulfilled);
 
-    $("scaleFunnel").textContent =
-      Math.round(scale.leads) + " leads → " +
-      Math.round(scale.confirmed) + " confirmed → " +
-      Math.round(scale.delivered) + " delivered";
-    $("scaleRevenue").textContent = fmtUsd(scale.revenue).replace("+", "");
+    $("beProfitLead").textContent = fmtUsd(unit.profitPerLead);
+    $("beProfitLead").className = "pc-be-value" + (unit.profitPerLead >= 0 ? "" : " neg");
+    $("beProfitCard").className = "pc-be-metric pc-be-metric--highlight" + (unit.profitPerLead < 0 ? " neg-card" : "");
+    $("beProfitNote").textContent = unit.profitPerLead >= 0
+      ? "✓ Above breakeven at current rates"
+      : "✗ Below breakeven — lower CPL or raise rates";
+    $("beProfitNote").className = "pc-be-note " + (unit.profitPerLead >= 0 ? "ok" : "bad");
+
+    $("beDelivery").textContent = fmtPct(beDelivery);
+    $("beDeliveryNote").textContent = inp.deliveryRate >= beDelivery
+      ? "Need ≥ " + fmtPct(beDelivery) + " — Current: " + Math.round(inp.deliveryRate * 100) + "% ✓"
+      : "Need ≥ " + fmtPct(beDelivery) + " — Current: " + Math.round(inp.deliveryRate * 100) + "% ✗";
+    $("beDeliveryNote").className = "pc-be-note " + (inp.deliveryRate >= beDelivery ? "ok" : "bad");
+
+    $("beCpl").textContent = fmtUsdPlain(maxCpl);
+    $("beCplNote").textContent = inp.cplUsd <= maxCpl
+      ? "Current CPL: $" + inp.cplUsd.toFixed(2) + " ✓ under budget"
+      : "Current CPL: $" + inp.cplUsd.toFixed(2) + " ✗ over budget";
+    $("beCplNote").className = "pc-be-note " + (inp.cplUsd <= maxCpl ? "ok" : "bad");
+
+    $("beConfirm").textContent = fmtPct(beConfirm);
+    $("beConfirmNote").textContent = inp.confirmRate >= beConfirm
+      ? "Need ≥ " + fmtPct(beConfirm) + " — Current: " + Math.round(inp.confirmRate * 100) + "% ✓"
+      : "Need ≥ " + fmtPct(beConfirm) + " — Current: " + Math.round(inp.confirmRate * 100) + "% ✗";
+    $("beConfirmNote").className = "pc-be-note " + (inp.confirmRate >= beConfirm ? "ok" : "bad");
+
+    $("scaleLeadCount").textContent = Math.round(inp.leadsScale).toLocaleString("en-US");
+    $("scaleLeads").textContent = Math.round(scale.leads).toLocaleString("en-US");
+    $("scaleConfirmed").textContent = Math.round(scale.confirmed).toLocaleString("en-US");
+    $("scaleDelivered").textContent = Math.round(scale.delivered).toLocaleString("en-US");
+
+    $("scaleRevenue").textContent = fmtUsdPlain(scale.revenue);
     $("scaleAdSpend").textContent = "-$" + scale.adSpend.toFixed(2);
     $("scaleProduct").textContent = "-$" + scale.productCost.toFixed(2);
     $("scaleConfirm").textContent = "-$" + scale.confirmFees.toFixed(2);
@@ -173,13 +203,13 @@
     $("scaleReturn").textContent = "-$" + scale.returnFees.toFixed(2);
     $("scaleTotalCost").textContent = "-$" + scale.totalCost.toFixed(2);
     $("scaleNet").textContent = fmtUsd(scale.netProfit);
-    $("scaleNet").className = "pc-scale-total " + (scale.netProfit >= 0 ? "pos" : "neg");
+    $("scaleNet").className = "pc-net-profit" + (scale.netProfit < 0 ? " neg" : "");
     $("scaleRoi").textContent = (scale.roi >= 0 ? "+" : "") + scale.roi.toFixed(1) + "%";
-    $("scaleRoi").className = "pc-scale-metric " + (scale.roi >= 0 ? "pos" : "neg");
+    $("scaleRoi").className = scale.roi >= 0 ? "" : "neg";
     $("scalePpl").textContent = fmtUsd(scale.profitPerLead);
-    $("scalePpl").className = "pc-scale-metric " + (scale.profitPerLead >= 0 ? "pos" : "neg");
+    $("scalePpl").className = scale.profitPerLead >= 0 ? "" : "neg";
     $("scalePpd").textContent = fmtUsd(scale.profitPerDelivery);
-    $("scalePpd").className = "pc-scale-metric " + (scale.profitPerDelivery >= 0 ? "pos" : "neg");
+    $("scalePpd").className = scale.profitPerDelivery >= 0 ? "" : "neg";
   }
 
   function bindInputs() {
