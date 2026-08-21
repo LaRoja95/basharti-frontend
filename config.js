@@ -4,7 +4,7 @@ window.BASHARTI_CONFIG = {
   STORE_URL: "https://bacharati.store",
 
   // Ad pixels — paste your IDs from each platform's Events Manager
-  META_PIXEL_ID: "1570480567898006",
+  META_PIXEL_ID: "27899734523051764",
   TIKTOK_PIXEL_ID: "",
   SNAPCHAT_PIXEL_ID: "",
 
