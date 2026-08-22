@@ -287,7 +287,13 @@
         goToThankYou(prepared, {
           name: form.name.value.trim(),
           regionName: region.name,
-          items: [{ name: p ? p.name : "منتج", quantity: state.qty, price: p ? p.price : 0 }],
+          items: [{
+            id: p ? p.id : "",
+            productId: p ? p.id : "",
+            name: p ? p.name : "منتج",
+            quantity: state.qty,
+            price: p ? p.price : 0,
+          }],
         });
       })
       .catch(function (err) {

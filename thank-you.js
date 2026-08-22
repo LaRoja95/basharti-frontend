@@ -15,12 +15,118 @@
 
   function loadOrder() {
     var params = new URLSearchParams(window.location.search);
-    var orderId = params.get("order") || "";
+    var orderId = (params.get("order") || "").trim();
+    var stored = null;
     try {
       var raw = sessionStorage.getItem("basharti:lastOrder");
-      if (raw) return JSON.parse(raw);
+      if (raw) stored = JSON.parse(raw);
     } catch (e) {}
+    if (stored && stored.orderId) {
+      if (orderId && stored.orderId !== orderId) {
+        stored.orderId = orderId;
+      }
+      return stored;
+    }
     return orderId ? { orderId: orderId } : null;
+  }
+
+  function pixelId() {
+    return ((window.BASHARTI_CONFIG && window.BASHARTI_CONFIG.META_PIXEL_ID) || "").trim();
+  }
+
+  function purchaseDedupeKey(orderId) {
+    return "fb_purchase_confirmed_v2_" + orderId;
+  }
+
+  function isPurchaseConfirmed(orderId) {
+    try {
+      return sessionStorage.getItem(purchaseDedupeKey(orderId)) === "1";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function markPurchaseConfirmed(orderId) {
+    try {
+      sessionStorage.setItem(purchaseDedupeKey(orderId), "1");
+    } catch (e) {}
+  }
+
+  function fbqReady() {
+    return typeof window.fbq === "function" && !!window.fbq.callMethod;
+  }
+
+  function buildPurchasePayload(order, total) {
+    var contentIds = (order.items || []).map(function (item) {
+      return item.id || item.productId || "";
+    }).filter(Boolean);
+    var contents = (order.items || []).map(function (item) {
+      return {
+        id: item.id || item.productId || "",
+        quantity: item.quantity || 1,
+      };
+    }).filter(function (entry) { return !!entry.id; });
+
+    return {
+      value: total != null ? Number(total) : 0,
+      currency: "SAR",
+      content_ids: contentIds,
+      content_type: "product",
+      contents: contents,
+      order_id: order.orderId,
+    };
+  }
+
+  function sendPurchaseBeacon(purchaseData) {
+    var id = pixelId();
+    if (!id) return;
+    var params = [
+      "id=" + encodeURIComponent(id),
+      "ev=Purchase",
+      "noscript=1",
+      "cd[value]=" + encodeURIComponent(String(purchaseData.value || 0)),
+      "cd[currency]=" + encodeURIComponent(purchaseData.currency || "SAR"),
+      "cd[order_id]=" + encodeURIComponent(purchaseData.order_id || ""),
+    ];
+    if (purchaseData.content_ids && purchaseData.content_ids.length) {
+      params.push("cd[content_ids]=" + encodeURIComponent(JSON.stringify(purchaseData.content_ids)));
+    }
+    var img = new Image(1, 1);
+    img.style.display = "none";
+    img.alt = "";
+    img.src = "https://www.facebook.com/tr?" + params.join("&");
+  }
+
+  function trackPurchaseEvent(order, total) {
+    if (!order || !order.orderId || isPurchaseConfirmed(order.orderId)) return;
+
+    var purchaseData = buildPurchasePayload(order, total);
+    var attempts = 0;
+    var maxAttempts = 30;
+
+    function trySend() {
+      if (isPurchaseConfirmed(order.orderId)) return;
+      attempts += 1;
+
+      if (typeof window.fbq === "function") {
+        window.fbq("track", "Purchase", purchaseData, { eventID: order.orderId });
+      }
+
+      if (fbqReady()) {
+        markPurchaseConfirmed(order.orderId);
+        return;
+      }
+
+      if (attempts >= maxAttempts) {
+        sendPurchaseBeacon(purchaseData);
+        markPurchaseConfirmed(order.orderId);
+        return;
+      }
+
+      setTimeout(trySend, 200);
+    }
+
+    trySend();
   }
 
   function formatItems(items) {
@@ -142,33 +248,7 @@
       });
     }
 
-    // Track Purchase event with deduplication (prevent duplicate on page refresh)
-    if (order.orderId && typeof window.fbq === "function") {
-      var dedupeKey = "fb_purchase_sent_" + order.orderId;
-      if (!sessionStorage.getItem(dedupeKey)) {
-        var purchaseValue = total != null ? total : 0;
-        var contentIds = (order.items || []).map(function(item) {
-          return item.id || item.productId || "";
-        }).filter(Boolean);
-        var contents = (order.items || []).map(function(item) {
-          return {
-            id: item.id || item.productId || "",
-            quantity: item.quantity || 1
-          };
-        });
-
-        window.fbq("track", "Purchase", {
-          value: purchaseValue,
-          currency: "SAR",
-          content_ids: contentIds,
-          content_type: "product",
-          contents: contents,
-          order_id: order.orderId
-        }, { eventID: order.orderId });
-
-        sessionStorage.setItem(dedupeKey, "1");
-      }
-    }
+    trackPurchaseEvent(order, total);
   }
 
   render(loadOrder());

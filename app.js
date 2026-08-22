@@ -470,6 +470,8 @@
         var items = state.cart.map(function (i) {
           var p = state.products[i.productId];
           return {
+            id: i.productId,
+            productId: i.productId,
             name: p ? p.name : i.productId,
             quantity: i.quantity,
             price: p ? p.price : 0,
