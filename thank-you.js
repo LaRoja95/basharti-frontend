@@ -141,6 +141,34 @@
         }
       });
     }
+
+    // Track Purchase event with deduplication (prevent duplicate on page refresh)
+    if (order.orderId && typeof window.fbq === "function") {
+      var dedupeKey = "fb_purchase_sent_" + order.orderId;
+      if (!sessionStorage.getItem(dedupeKey)) {
+        var purchaseValue = total != null ? total : 0;
+        var contentIds = (order.items || []).map(function(item) {
+          return item.id || item.productId || "";
+        }).filter(Boolean);
+        var contents = (order.items || []).map(function(item) {
+          return {
+            id: item.id || item.productId || "",
+            quantity: item.quantity || 1
+          };
+        });
+
+        window.fbq("track", "Purchase", {
+          value: purchaseValue,
+          currency: "SAR",
+          content_ids: contentIds,
+          content_type: "product",
+          contents: contents,
+          order_id: order.orderId
+        }, { eventID: order.orderId });
+
+        sessionStorage.setItem(dedupeKey, "1");
+      }
+    }
   }
 
   render(loadOrder());
